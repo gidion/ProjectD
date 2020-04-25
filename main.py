@@ -1,85 +1,208 @@
+import os
+import time
+
+import kivy.properties as props
+from PIL import Image as ImagePIL, ImageDraw, ImageFilter
 from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.properties import (
-    NumericProperty, ReferenceListProperty, ObjectProperty
-    )
-from kivy.vector import Vector
 from kivy.clock import Clock
+from kivy.core.window import Window
+from kivy.graphics.texture import Texture
+from kivy.lang import Builder
+from kivy.properties import StringProperty
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import ButtonBehavior
+from kivy.uix.image import Image
+from kivy.uix.label import Label
+from kivy.uix.screenmanager import Screen
+from kivymd.app import MDApp
+from kivymd.theming import ThemableBehavior
+from kivymd.uix.list import OneLineIconListItem, MDList
+from kivymd.utils.cropimage import crop_image
 
-from random import randint
+RAD_MULT = 0.25  # Blur Radius Multiplier
 
-class PongPaddle(Widget):
-    score = NumericProperty(0)
+Window.size = (450, 800)
 
-    def bounce_ball(self, ball):
-        if self.collide_widget(ball):
-            vx, vy = ball.velocity
-            offset = (ball.center_y - self.center_y) / (self.height / 2)
-            bounced = Vector(-1 * vx, vy)
-            vel = bounced * 1.1
-            ball.velocity = vel.x, vel.y + offset
 
-#pongball
-class PongBall(Widget):
-    #velocity of the ball
-    velocity_x = NumericProperty(0)
-    velocity_y = NumericProperty(0) 
+class ImageButton(ButtonBehavior, Image):
+    pass
 
-    #referencelist to short hand the velocity values
-    velocity = ReferenceListProperty(velocity_x, velocity_y)
 
-    #''move'' function will move the ball one step
-    # will be called in equal intervals
-    def move(self):
-        self.pos = Vector(*self.velocity) + self.pos
+class ShadowWidget(Label):
 
-#widget is referenced in Demo.kv
-class PongGame(Widget):
-    ball = ObjectProperty(None)
-    player1 = ObjectProperty(None)
-    player2 = ObjectProperty(None)
+    shadow_texture1 = props.ObjectProperty(None)
+    shadow_pos1 = props.ListProperty([0, 0])
+    shadow_size1 = props.ListProperty([0, 0])
 
-    def serve_ball(self, vel=(4, 0)):
-        self.ball.center = self.center
-        self.ball.velocity = vel
+    shadow_texture2 = props.ObjectProperty(None)
+    shadow_pos2 = props.ListProperty([0, 0])
+    shadow_size2 = props.ListProperty([0, 0])
 
-    def update(self, dt):
-        #update ball movement
-        self.ball.move()
+    elevation = props.NumericProperty(1)
+    _shadow_clock = None
 
-        # bounce of paddles
-        self.player1.bounce_ball(self.ball)
-        self.player2.bounce_ball(self.ball)
+    _shadows = {
+        1: (1, 3, 0.12, 1, 2, 0.24),
+        2: (3, 6, 0.16, 3, 6, 0.23),
+        3: (10, 20, 0.19, 6, 6, 0.23),
+        4: (14, 28, 0.25, 10, 10, 0.22),
+        5: (19, 38, 0.30, 15, 12, 0.22)
+    }
 
-        #bounce off top and bottom
-        if(self.ball.y < 0) or (self.ball.top > self.height):
-            self.ball.velocity_y *= -1
+    # Shadows for each elevation.
+    # Each tuple is: (offset_y1, blur_radius1, color_alpha1, offset_y2, blur_radius2, color_alpha2)
+    # The values are extracted from the css (box-shadow rule).
 
-        #reaches side for score
-        if self.ball.x < self.x:
-            self.player2.score += 1
-            self.serve_ball(vel=(4, 0))
-        if self.ball.x > self.width:
-            self.player1.score += 1
-            self.serve_ball(vel=(-4, 0))
+    def __init__(self, *args, **kwargs):
+        super(ShadowWidget, self).__init__(*args, **kwargs)
 
-    # on mouse/touch input, move paddle based on side
-    def on_touch_move(self, touch):
-        if touch.x < self.width / 3:
-            self.player1.center_y = touch.y
-        if touch.x > self.width - self.width / 3:
-            self.player2.center_y = touch.y
+        self._update_shadow = Clock.create_trigger(self._create_shadow)
 
-#create the application
-class MainApp(App):
+    def on_size(self, *args, **kwargs):
+        self._update_shadow()
+
+    def on_pos(self, *args, **kwargs):
+        self._update_shadow()
+
+    def on_elevation(self, *args, **kwargs):
+        self._update_shadow()
+
+    def _create_shadow(self, *args):
+        # print "update shadow"
+        ow, oh = self.size[0], self.size[1]
+
+        offset_x = 0
+
+        # Shadow 1
+        shadow_data = self._shadows[self.elevation]
+        offset_y = shadow_data[0]
+        radius = shadow_data[1]
+        w, h = ow + radius * 6.0, oh + radius * 6.0
+        t1 = self._create_boxshadow(ow, oh, radius, shadow_data[2])
+        self.shadow_texture1 = t1
+        self.shadow_size1 = w, h
+        self.shadow_pos1 = self.x - \
+            (w - ow) / 2. + offset_x, self.y - (h - oh) / 2. - offset_y
+
+        # Shadow 2
+        shadow_data = self._shadows[self.elevation]
+        offset_y = shadow_data[3]
+        radius = shadow_data[4]
+        w, h = ow + radius * 6.0, oh + radius * 6.0
+        t2 = self._create_boxshadow(ow, oh, radius, shadow_data[5])
+        self.shadow_texture2 = t2
+        self.shadow_size2 = w, h
+        self.shadow_pos2 = self.x - \
+            (w - ow) / 2. + offset_x, self.y - (h - oh) / 2. - offset_y
+
+    def _create_boxshadow(self, ow, oh, radius, alpha):
+        # We need a bigger texture to correctly blur the edges
+        w = ow + radius * 6.0
+        h = oh + radius * 6.0
+        w = int(w)
+        h = int(h)
+        texture = Texture.create(size=(w, h), colorfmt='rgba')
+        im = ImagePIL.new('RGBA', (w, h), color=(1, 1, 1, 0))
+
+        draw = ImageDraw.Draw(im)
+        # the rectangle to be rendered needs to be centered on the texture
+        x0, y0 = (w - ow) / 2., (h - oh) / 2.
+        x1, y1 = x0 + ow - 1, y0 + oh - 1
+        draw.rectangle((x0, y0, x1, y1), fill=(0, 0, 0, int(255 * alpha)))
+        im = im.filter(ImageFilter.GaussianBlur(radius * RAD_MULT))
+        texture.blit_buffer(im.tobytes(), colorfmt='rgba', bufferfmt='ubyte')
+        return texture
+
+
+class CameraClick(BoxLayout):
+    def capture(self):
+        camera = self.ids['camera']
+        timestr = time.strftime("%Y%m%d_%H%M%S")
+        camera.export_to_png("IMG_{}.png".format(timestr))
+        print("Captured")
+
+
+class TestCamera(App):
+
     def build(self):
-        game = PongGame()
-        #send off ball
-        game.serve_ball() 
-        #updates the game every 60th of a second(60 times per second)
-        Clock.schedule_interval(game.update,1.0/60.0)
-        return game
+        return CameraClick()
 
-if __name__ == '__main__':
-    #run app
-    MainApp().run()
+
+class CameraWindow(Screen):
+    def capture(self):
+        camera = self.ids['camera']
+        timestr = time.strftime("%Y%m%d_%H%M%S")
+        camera.export_to_png("IMG_{}.png".format(timestr))
+        print("Captured")
+
+
+class ContentNavigationDrawer(BoxLayout):
+    pass
+
+
+class ItemDrawer(OneLineIconListItem):
+    icon = StringProperty()
+    target = StringProperty()
+
+
+class DrawerList(ThemableBehavior, MDList):
+    def set_color_item(self, instance_item):
+        """Called when tap on a menu item."""
+
+        # Set the color of the icon and text for the menu item.
+        for item in self.children:
+            if item.text_color == self.theme_cls.primary_color:
+                item.text_color = self.theme_cls.text_color
+                break
+        instance_item.text_color = self.theme_cls.primary_color
+
+
+class NavDrawerAndScreenManagerApp(MDApp):
+
+    def crop_image_for_tile(self, instance, size, path_to_crop_image):
+        if not os.path.exists(os.path.join(self.directory, path_to_crop_image)):
+            size = (int(size[0]), int(size[1]))
+            path_to_origin_image = path_to_crop_image.replace("_tile_crop", "")
+            crop_image(size, path_to_origin_image, path_to_crop_image)
+        instance.source = path_to_crop_image
+
+    def build(self):
+        return Builder.load_file("main.kv")
+
+    def openScreen(self, itemdrawer):
+        self.openScreenName(itemdrawer.target)
+        self.root.ids.nav_drawer.set_state("close")
+
+    def openScreenName(self, screenName):
+        self.root.ids.sm.current = screenName
+
+    def on_start(self):
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Home", text="Home",
+                       icon="home-circle-outline",
+                       on_release=self.openScreen)
+        )
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Gallery", text="Gallery",
+                       icon="image-multiple",
+                       on_release=self.openScreen)
+        )
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Camera", text="Camera",
+                       icon="camera",
+                       on_release=self.openScreen)
+        )
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Assortment", text="Assortment",
+                       icon="tshirt-v",
+                       on_release=self.openScreen)
+        )
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Settings", text="Settings",
+                       icon="settings-outline",
+                       on_release=self.openScreen)
+        )
+
+
+if __name__ == "__main__":
+    NavDrawerAndScreenManagerApp().run()
