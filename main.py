@@ -1,121 +1,233 @@
+import os
+import time
+
+import kivy.properties as props
+from PIL import Image as ImagePIL, ImageDraw, ImageFilter
 from kivy.app import App
+from kivy.clock import Clock
+from kivy.core.window import Window
+from kivy.graphics.texture import Texture
+from kivy.lang import Builder
+from kivy.properties import StringProperty
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import ButtonBehavior
+from kivy.uix.image import Image
 from kivy.uix.label import Label
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.textinput import TextInput
-from kivy.uix.button import Button
-from kivy.config import Config
-from kivy.uix.widget import Widget
-from kivy.properties import ObjectProperty
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivymd.app import MDApp
+from kivymd.theming import ThemableBehavior
+from kivymd.uix.list import OneLineIconListItem, MDList
+from kivymd.utils.cropimage import crop_image
+
+from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
-from kivy.uix.image import Image
+
+
+
+import user_model as user_model_
+import numpy as np
 import cv2 
 import os
-from kivy.uix.boxlayout import BoxLayout
-import numpy as np
 
 
-#onfig.set('graphics', 'width', '412')
-#Config.set('graphics', 'height', '732')
+RAD_MULT = 0.25  # Blur Radius Multiplier
 
-#.kv must be the same, but without App
-# Loading Multiple .kv files  
+Window.size = (450, 800)
 
+Builder.load_file('user_model.kv') 
 
-class WindowManager(ScreenManager):
+class ImageButton(ButtonBehavior, Image):
     pass
 
-class Main_Model_Page(Screen):
-    img = 'default.jpg'
-    #popup window for deleting model
 
-    #show the delete model popup
-    def Show_delete_popup(self):             
-        show = Delete_popup()
-        popupWindow = Popup(title="Delete Model?", content=show, size_hint=(0.7,0.7))
-        
-        #open windows     
-        popupWindow.open()
-    
-    def test(self):
-        print('yup')
+class ShadowWidget(Label):
 
-    #delete the model
-    def Delete_model(self):
-        App.get_running_app().model = 'default.jpg'
-        self.ids.model_image.source = 'default.jpg'
-        #closes popup window
-        lambda: self.popup_exit.dismiss()
+    shadow_texture1 = props.ObjectProperty(None)
+    shadow_pos1 = props.ListProperty([0, 0])
+    shadow_size1 = props.ListProperty([0, 0])
 
-    #updates the preview(image), of the model
-    def Update_model_image(self,url):
-        App.get_running_app().model = url
-        self.ids.model_image.source = url
+    shadow_texture2 = props.ObjectProperty(None)
+    shadow_pos2 = props.ListProperty([0, 0])
+    shadow_size2 = props.ListProperty([0, 0])
+
+    elevation = props.NumericProperty(1)
+    _shadow_clock = None
+
+    _shadows = {
+        1: (1, 3, 0.12, 1, 2, 0.24),
+        2: (3, 6, 0.16, 3, 6, 0.23),
+        3: (10, 20, 0.19, 6, 6, 0.23),
+        4: (14, 28, 0.25, 10, 10, 0.22),
+        5: (19, 38, 0.30, 15, 12, 0.22)
+    }
+
+    # Shadows for each elevation.
+    # Each tuple is: (offset_y1, blur_radius1, color_alpha1, offset_y2, blur_radius2, color_alpha2)
+    # The values are extracted from the css (box-shadow rule).
+
+    def __init__(self, *args, **kwargs):
+        super(ShadowWidget, self).__init__(*args, **kwargs)
+
+        self._update_shadow = Clock.create_trigger(self._create_shadow)
+
+    def on_size(self, *args, **kwargs):
+        self._update_shadow()
+
+    def on_pos(self, *args, **kwargs):
+        self._update_shadow()
+
+    def on_elevation(self, *args, **kwargs):
+        self._update_shadow()
+
+    def _create_shadow(self, *args):
+        # print "update shadow"
+        ow, oh = self.size[0], self.size[1]
+
+        offset_x = 0
+
+        # Shadow 1
+        shadow_data = self._shadows[self.elevation]
+        offset_y = shadow_data[0]
+        radius = shadow_data[1]
+        w, h = ow + radius * 6.0, oh + radius * 6.0
+        t1 = self._create_boxshadow(ow, oh, radius, shadow_data[2])
+        self.shadow_texture1 = t1
+        self.shadow_size1 = w, h
+        self.shadow_pos1 = self.x - \
+            (w - ow) / 2. + offset_x, self.y - (h - oh) / 2. - offset_y
+
+        # Shadow 2
+        shadow_data = self._shadows[self.elevation]
+        offset_y = shadow_data[3]
+        radius = shadow_data[4]
+        w, h = ow + radius * 6.0, oh + radius * 6.0
+        t2 = self._create_boxshadow(ow, oh, radius, shadow_data[5])
+        self.shadow_texture2 = t2
+        self.shadow_size2 = w, h
+        self.shadow_pos2 = self.x - \
+            (w - ow) / 2. + offset_x, self.y - (h - oh) / 2. - offset_y
+
+    def _create_boxshadow(self, ow, oh, radius, alpha):
+        # We need a bigger texture to correctly blur the edges
+        w = ow + radius * 6.0
+        h = oh + radius * 6.0
+        w = int(w)
+        h = int(h)
+        texture = Texture.create(size=(w, h), colorfmt='rgba')
+        im = ImagePIL.new('RGBA', (w, h), color=(1, 1, 1, 0))
+
+        draw = ImageDraw.Draw(im)
+        # the rectangle to be rendered needs to be centered on the texture
+        x0, y0 = (w - ow) / 2., (h - oh) / 2.
+        x1, y1 = x0 + ow - 1, y0 + oh - 1
+        draw.rectangle((x0, y0, x1, y1), fill=(0, 0, 0, int(255 * alpha)))
+        im = im.filter(ImageFilter.GaussianBlur(radius * RAD_MULT))
+        texture.blit_buffer(im.tobytes(), colorfmt='rgba', bufferfmt='ubyte')
+        return texture
 
 
-class Filechooser_Page(Screen):    
-    mangr = ScreenManager
-    #on selecting a item
-    def selected(self, filename):
-        print(filename)
-        try:
-            self.ids.image_show.source = filename[0]
-        except: 
-            pass
-
-    def open(self, path, filename):
-       with open(os.path.join(path, filename[0])) as filee:
-            print(filee.read())
-    
-    #submit choosen image
-    def submit(self):
-        app = App.get_running_app()
-    
-        im_ = self.ids.image_show.source
-        self.ids.image_show.source = 'default.jpg'
-        app.root.get_screen('Create_model_page').ids.create_image.source = im_       
-        
-
-class Create_model_page(Screen):
-    #update the main model page/preview/image
-    def create_model(self):      
-        app = App.get_running_app()
-        app.root.get_screen('Main_Model_Page').Update_model_image(self.ids.create_image.source)
-    def process(self):
-        img = cv2.imread(self.ids.create_image.source)
-        self.ids.create_image.source = 'default.jpg'
-        #new img url
-        #img_pros_url = old_url[:-4] + 'processed' + '.png'
-        img_pros_url = 'processed.png'
-
-        #Processing
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        #rgb colors
-        l_b = np.array([0, 32, 0])
-        #hue
-        u_b = np.array([255, 255, 255])
-        mask = cv2.inRange(hsv, l_b, u_b)
-        res = cv2.bitwise_and(img, img, mask=mask)
+class CameraClick(BoxLayout):
+    def capture(self):
+        camera = self.ids['camera']
+        timestr = time.strftime("%Y%m%d_%H%M%S")
+        camera.export_to_png("IMG_{}.png".format(timestr))
+        print("Captured")
 
 
+class TestCamera(App):
 
-        #save new processed image copy
-        cv2.imwrite(img_pros_url, res )
-        #show processed image
-        self.ids.create_image.source = img_pros_url
-   
-
-class Delete_popup(FloatLayout):
-    pass
-
-kv = Builder.load_file("main.kv")
-
-class MainApp(App):
-    model = 'default.jpg'
     def build(self):
-        return kv
+        return CameraClick()
 
-if __name__ == '__main__':
-    MainApp().run()
+
+class CameraWindow(Screen):
+    def capture(self):
+        camera = self.ids['camera']
+        timestr = time.strftime("%Y%m%d_%H%M%S")
+        camera.export_to_png("IMG_{}.png".format(timestr))
+        print("Captured")
+
+
+class ContentNavigationDrawer(BoxLayout):
+    pass
+
+
+class ItemDrawer(OneLineIconListItem):
+    icon = StringProperty()
+    target = StringProperty()
+
+
+class DrawerList(ThemableBehavior, MDList):
+    def set_color_item(self, instance_item):
+        """Called when tap on a menu item."""
+
+        # Set the color of the icon and text for the menu item.
+        for item in self.children:
+            if item.text_color == self.theme_cls.primary_color:
+                item.text_color = self.theme_cls.text_color
+                break
+        instance_item.text_color = self.theme_cls.primary_color
+
+
+class NavDrawerAndScreenManagerApp(MDApp):
+
+    def crop_image_for_tile(self, instance, size, path_to_crop_image):
+        if not os.path.exists(os.path.join(self.directory, path_to_crop_image)):
+            size = (int(size[0]), int(size[1]))
+            path_to_origin_image = path_to_crop_image.replace("_tile_crop", "")
+            crop_image(size, path_to_origin_image, path_to_crop_image)
+        instance.source = path_to_crop_image
+
+    def build(self):
+        return Builder.load_file("main.kv")
+
+    def openScreen(self, itemdrawer):
+        self.openScreenName(itemdrawer.target)
+        self.root.ids.nav_drawer.set_state("close")
+
+    def open_model(self):
+        self.root.ids.sm.get_screen("Main_Model_Page")
+
+    def openScreenName(self, screenName):
+        self.root.ids.sm.current = screenName
+
+    def on_start(self):
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Home", text="Home",
+                       icon="home-circle-outline",
+                       on_release=self.openScreen)
+        )
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Gallery", text="Gallery",
+                       icon="image-multiple",
+                       on_release=self.openScreen)
+        )
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Camera", text="Camera",
+                       icon="camera",
+                       on_release=self.openScreen)
+        )
+
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Main_Model_Page", text="Model",
+                       icon="camera",
+                       on_release=self.openScreen)
+        )
+
+
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Assortment", text="Assortment",
+                       icon="tshirt-v",
+                       on_release=self.openScreen)
+        )
+        self.root.ids.content_drawer.ids.md_list.add_widget(
+            ItemDrawer(target="Settings", text="Settings",
+                       icon="settings-outline",
+                       on_release=self.openScreen)
+        )
+
+
+if __name__ == "__main__":
+    NavDrawerAndScreenManagerApp().run()

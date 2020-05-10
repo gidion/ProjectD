@@ -27,9 +27,7 @@ import test as testerino
 
 #.kv must be the same, but without App
 # Loading Multiple .kv files  
-Builder.load_file('Model_User/Main_Model_page.kv') 
-Builder.load_file('Model_User/Create_model_page.kv') 
-Builder.load_file('Model_User/Filechooser_page.kv') 
+
 
 class WindowManager(ScreenManager):
     pass
@@ -61,10 +59,10 @@ class Main_Model_Page(Screen):
         App.get_running_app().model = url
         self.ids.model_image.source = url
 
-lol = testerino.Special_specific_screen()
+
 
 class Filechooser_Page(Screen):    
-    mangr = ScreenManager
+    
     #on selecting a item
     def selected(self, filename):
         print(filename)
@@ -79,18 +77,20 @@ class Filechooser_Page(Screen):
     
     #submit choosen image
     def submit(self):
-        app = App.get_running_app()
+        
+        #app = App.get_running_app()
     
         im_ = self.ids.image_show.source
         self.ids.image_show.source = 'default.jpg'
-        app.root.get_screen('Create_model_page').ids.create_image.source = im_       
-        
+        self.sm.get_screen('Create_model_page').ids.create_image.source = im_       
+    
 
 class Create_model_page(Screen):
     #update the main model page/preview/image
-    def create_model(self):      
-        app = App.get_running_app()
-        app.root.get_screen('Main_Model_Page').Update_model_image(self.ids.create_image.source)
+    def create_model(self):     
+        
+        #app = App.get_running_app()
+        self.sm.get_screen('Main_Model_Page').Update_model_image(self.ids.create_image.source)
     def process(self):
         img = cv2.imread(self.ids.create_image.source)
         self.ids.create_image.source = 'default.jpg'
@@ -117,13 +117,3 @@ class Create_model_page(Screen):
 
 class Delete_popup(FloatLayout):
     pass
-
-kv = Builder.load_file("main.kv")
-
-class MainApp(App):
-    model = 'default.jpg'
-    def build(self):
-        return kv
-
-if __name__ == '__main__':
-    MainApp().run()

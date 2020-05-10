@@ -1,192 +1,43 @@
 #:kivy 1.0.9
-#file name must end on the name of the app
+#:import SwapTransition kivy.uix.screenmanager.SwapTransition
 
-WindowManager:
-    Main_Model_Page:
-    Create_model_page:
-    Filechooser_Page:
 
-<Main_Model_Page>:
-    name: "Main_Model_Page"
-    #background
-    canvas:
+
+
+<ItemDrawer>:
+    theme_text_color: "Custom"
+    on_release:
+        self.parent.set_color_item(self)
+
+    IconLeftWidget:
+        id: icon
+        icon: root.icon
+        theme_text_color: "Custom"
+        text_color: root.text_color
+
+<MySmartTileWithLabel@SmartTileWithLabel>:
+    mipmap: True
+    font_style: "Subhead"
+
+<ShadowWidget>
+    color: (1, 0, 0, 1)
+    canvas.before:
         Color:
-            rgba: 1, 0.9, 0.6, 1
+            rgba: 1,1,1,1
         Rectangle:
-            pos: self.pos
-            size: self.size
-
-
-    #temp nav bar
-    Widget:
-        canvas:
-            Color:
-                rgba: 1, 1, 1, 1
-            Rectangle:
-                pos: self.pos
-                size: self.size
-        pos_hint: {"top": 0.15, "x": 0}
-            #           x   y
-        size_hint: 1, 0.1
-
-    #temp image
-    Image:
-        id: model_image
-        source: root.img
-
-        pos_hint: {"top": 0.97, "x": 0.2}
-        #           x   y
-        size_hint: 0.6, 0.45
-        #on_release:
-        #    test()        
-    #create/cam
-    Button:
-        id: 'Create'
-        text: "Create Model"
-        pos_hint: {"x":0.05, "y": 0.33}
-        size_hint: 0.25, 0.15
-        background_color: 0.9, 0.8, 0.6, 1
-        on_release: 
-            app.root.current = "Create_model_page"
-            root.manager.transition.direction = "down"
-
-    #Edit
-    Button:
-        id: 'Edit'
-        text: "Edit"
-        #on_release: root.btn()
-        pos_hint: {"x":0.375, "y": 0.2}
-        size_hint: 0.25, 0.15
-        background_color: 0.9, 0.7, 0, 1
-    
-    #Delete
-    Button:
-        id: 'Delete'
-        text: "Delete"
-        on_release: root.Show_delete_popup()
-        pos_hint: {"x":0.7, "y": 0.33}
-        size_hint: 0.25, 0.15
-        background_color: 1, 0, 0, 1
-#######
-<Filechooser_Page>: 
-    name: 'Filechooser_Page' 
-    FloatLayout:
-        id: Filechooser
-        # Providing the orentation 
-        orientation: 'vertical'
-     
-        # Creating list view one side 
-        FileChooserListView: 
-            pos_hint: {'X': 0.8, 'y': 0.4}
-            size_hint: 0.7, 0.6
-            filters: ['*.png']        
-            
-            on_selection: 
-                root.selected(self.selection) 
-        # Creating Icon view other side 
-        FileChooserIconView: 
-            pos_hint: {'X': 0, 'y': 0.4}
-            size_hint: 1, 0.6
-            #try to change icon to small image
-            canvas.before: 
-                Color: 
-                    rgb: .5, .4, .5
-                Rectangle: 
-                    pos: 0,  -1
-                    size: self.size 
-            dirselect: True
-            on_selection: 
-                #root.select(*args) 
-                root.selected(self.selection) 
-        Image:
-            pos_hint: {'X': 0.8, 'y': 0}
-            size_hint: 0.4, 0.4
-            id: image_show
-            source: 'default.jpg'
-            
-        Button:
-            id: 'Submit'
-            text: "Submit"
-            on_release: 
-                app.root.current = "Create_model_page"
-                root.manager.transition.direction = "right"
-                root.submit()
-            pos_hint: {"x":0.375, "y": 0.1}
-            size_hint: 0.25, 0.15
-            background_color: 0.9, 0.7, 0, 1
-########
-<Create_model_page>:
-    name: "Create_model_page"
-    #background
-    canvas:
+            size: self.shadow_size1
+            pos: self.shadow_pos1
+            texture: self.shadow_texture1
+        Rectangle:
+            size: self.shadow_size2
+            pos: self.shadow_pos2
+            texture: self.shadow_texture2
         Color:
-            rgba: 0.1, 0.1, 0.1, 1
+            rgba: 1,1,1,1
         Rectangle:
-            pos: self.pos
             size: self.size
-            
-    #temp image
-    Image:
-        id: create_image
-        pos_hint: {"top": 0.97, "x": 0.2}
-        #           x   y
-        size_hint: 0.6, 0.45
-        source: 'default.jpg'
-    #Camera
-    Button:
-        id: 'Camera'
-        text: "Camera"
-        #on_release: root.btn()
-        pos_hint: {"x":0.1, "y": 0.2}
-        size_hint: 0.25, 0.15
-        background_color: 0.9, 0.8, 0.6, 1
-    
-    #Done
-    Button:
-        id: 'Done'
-        text: "Create"
-        on_release: 
-            app.root.current = "Main_Model_Page"
-            root.manager.transition.direction = "up"
-            root.create_model()
-        pos_hint: {"x":0.375, "y": 0.16}
-        size_hint: 0.25, 0.15
-        background_color: 0.9, 0.7, 0, 1
+            pos: self.pos
 
-     #process
-    Button:
-        id: 'Process'
-        text: "Convert/process"
-        on_release: 
-            #app.root.current = "Main_Model_Page"
-            #root.manager.transition.direction = "up"
-            root.process()
-        pos_hint: {"x":0.375, "y": 0.3}
-        size_hint: 0.25, 0.15
-        background_color: 0.9, 0.7, 0, 1
-
-
-    #back
-    Button:
-        id: 'back'
-        text: "Go back"
-        pos_hint: {"x":0.375, "y": 0.01}
-        size_hint: 0.25, 0.15
-        background_color: 0.05, 0.05, 0.05, 1
-        on_release: 
-            app.root.current = "Main_Model_Page"
-            root.manager.transition.direction = "up"
-    #Gallery
-    Button:
-        id: 'Gallery'
-        text: "Gallery"
-        on_release: 
-            app.root.current = "Filechooser_Page"
-            root.manager.transition.direction = "left"
-        pos_hint: {"x":0.65, "y": 0.2}
-        size_hint: 0.25, 0.15
-        background_color: 1, 0, 0, 1
-#######   
 <Delete_popup>:
     Label:
         text: "Are you sure you want to delete your model?"
@@ -198,6 +49,471 @@ WindowManager:
         size_hint: 0.6, 0.2
         pos_hint: {"x": 0.2,"top": 0.3}
         on_release:
-            app.root.get_screen('Main_Model_Page').Delete_model()
+            root.sm.get_screen('Main_Model_Page').Delete_model()
             
 
+
+
+
+<ContentNavigationDrawer>:
+    orientation: "vertical"
+    padding: "8dp"
+    spacing: "8dp"
+
+    AnchorLayout:
+        anchor_x: "left"
+        size_hint_y: None
+        height: avatar.height
+
+        Image:
+            id: avatar
+            size_hint: None, None
+            size: "120dp", "120dp"
+            source: "logo.png"
+
+    MDLabel:
+        text: "<Slogan Maybe?>"
+        color: (0,0,0,0.7)
+        font_style: "Button"
+        size_hint_y: None
+        height: self.texture_size[1]
+
+    MDLabel:
+        text: "https://www.tashira.nl"
+        color: (0,0,0,0.7)
+        font_style: "Caption"
+        size_hint_y: None
+        height: self.texture_size[1]
+    ScrollView:
+        pos_hint: {'top': 0}
+        DrawerList:
+            id: md_list
+
+
+
+Screen:
+    id: scr
+    # Background
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'lace_bg.png'
+    # ---
+    MDToolbar:
+        pos_hint: {'top':1}
+
+        title: sm.current
+        md_bg_color: (.9,.7,.7,1)
+        left_action_items: [['menu', lambda x: nav_drawer.set_state("toggle")]]
+
+    NavigationLayout:
+
+        ScreenManager:
+            id: sm
+
+            transition:
+                SwapTransition()
+
+            # Home Screen
+            Screen:
+                name: "Home"
+                Image:
+                    source: 'logo.png'
+                    pos_hint: {'center_x':0.5, 'center_y': 0.85}
+                FloatLayout:
+                    orientation: 'vertical'
+
+                    id: carousel_box
+                    size_hint_y: 0.8
+                    size_hint_x: 0.9
+                    pos_hint:{'center_x' : 0.5, 'top':0.9}
+
+                    ShadowWidget:
+                        size_hint:(1,0.9)
+                        pos_hint: {'center_x':0.5, 'center_y':0.4}
+                        elevation: 3
+                    Carousel:
+                        id: carousel
+                        #size_hint_max_y:carousel_box.height*0.99
+                        pos_hint: {'center_x':0.5, 'center_y':0.4}
+                        direction: 'right'
+                        loop: True
+                        min_move: 0.1
+        #                AsyncImage:
+        #                    source: 'http://placehold.it/480x270.png&text=slide-1.png'
+        #                AsyncImage:
+        #                    source: 'http://placehold.it/480x270.png&text=slide-2.png'
+                        ImageButton:
+                            source: 'dress_pic1.jpg'
+                            on_release: sm.current = 'Assortment'
+                        Image:
+                            source: 'dress_pic2.jpg'
+                        Image:
+                            source: 'dress_pic3.jpg'
+                        Image:
+                            source: 'dress_pic4.jpg'
+
+            # Gallery Screen
+            Screen:
+                name: "Gallery"
+                
+                on_enter:
+                    app.crop_image_for_tile(tile_1, tile_1.size, \
+                    "ph.jpg")
+                    app.crop_image_for_tile(tile_2, tile_2.size, \
+                    "measure.png")
+                    app.crop_image_for_tile(tile_3, tile_3.size, \
+                    "dress_pic3.jpg")
+                    app.crop_image_for_tile(tile_4, tile_4.size, \
+                    "dress_pic4.jpg")
+                    app.crop_image_for_tile(tile_5, tile_5.size, \
+                    "ps.jpeg")
+                    app.crop_image_for_tile(tile_6, tile_6.size, \
+                    "ph.jpg")
+                    app.crop_image_for_tile(tile_7, tile_7.size, \
+                    "measure.png")
+                    app.crop_image_for_tile(tile_8, tile_8.size, \
+                    "dress_pic3.jpg")
+                    app.crop_image_for_tile(tile_9, tile_9.size, \
+                    "dress_pic4.jpg")
+
+                BoxLayout:
+                    orientation: "vertical"
+
+                    # Make a toolbar with 100% transparency, and 0 shadow.
+                    # Workaround because original bar disappears behind pictures, fix later
+                    MDToolbar:
+                        md_bg_color: 1,1,1,0
+                        elevation: 0
+
+                    ScrollView:
+                        do_scroll_x: False
+                        GridLayout:
+                            cols: 2
+                            row_default_height:
+                                (self.width - self.cols*self.spacing[0])/self.cols
+                            row_force_default: True
+                            size_hint_y: None
+                            height: self.minimum_height
+                            padding: dp(4), dp(4)
+                            spacing: dp(4)
+
+                            SmartTileWithLabel:
+                                id: tile_1
+                                text:
+                                    "[size=20][color=#ffffff]Image 1[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_2
+                                text:
+                                    "[size=20][color=#ffffff]Image 2[/color][/size]\n[size=10]2020_09_08_1532.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_3
+                                name: 'sdtsdaf'
+                                text:
+                                    "[size=20][color=#ffffff]Image 3[/color][/size]\n[size=10]2020_11_02_0954.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+                                on_release:
+                                    clicked_pic = self.source
+                                    print(clicked_pic)
+                                    sm.current = 'Photo Info'
+                            SmartTileWithLabel:
+                                id: tile_4
+                                text:
+                                    "[size=20][color=#ffffff]Image 4[/color][/size]\n[size=10]2020_08_07_0822.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+                                on_release:
+                                    clicked_pic = self.source
+                                    print(clicked_pic)
+                                    sm.current = 'Photo Info 2'
+                            SmartTileWithLabel:
+                                id: tile_5
+                                text:
+                                    "[size=20][color=#ffffff]Image 5[/color][/size]\n[size=10]2020_04_08_1432.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_6
+                                text:
+                                    "[size=20][color=#ffffff]Image 6[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_7
+                                text:
+                                    "[size=20][color=#ffffff]Image 7[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_8
+                                text:
+                                    "[size=20][color=#ffffff]Image 8[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_9
+                                text:
+                                    "[size=20][color=#ffffff]Image 9[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+
+            # Camera Screen
+            Screen:
+                name: "Camera"
+                RelativeLayout:
+
+                    ShadowWidget:
+                        size_hint:(0.5,0.1)
+                        pos_hint: {'center_x':0.5, 'center_y':0.1}
+                        elevation: 3
+                    Camera:
+                        id: camera
+                        pos_hint: {'left':0, 'center_y': 0.6}
+                        resolution: (640, 480)
+                        play: False
+                    MDIconButton:
+                        pos_hint: {'center_x':0.4, 'center_y': 0.1}
+                        icon: "pause-circle-outline" if camera.play else "play-circle-outline"
+                        user_font_size: "64sp"
+                        theme_text_color: "Custom"
+                        on_release: camera.play = not camera.play
+                    MDIconButton:
+                        pos_hint: {'center_x':0.6, 'center_y': 0.1}
+                        icon: "camera-plus"
+                        user_font_size: "64sp"
+                        theme_text_color: "Custom"
+                        on_release: app.capture()
+
+
+
+            # Assortment Screen
+            Screen:
+                name: "Assortment"
+
+                on_enter:
+                    app.crop_image_for_tile(tile_1a, tile_1a.size, \
+                    "dress1.jpg")
+                    app.crop_image_for_tile(tile_2a, tile_2a.size, \
+                    "dress2.jpg")
+                    app.crop_image_for_tile(tile_3a, tile_3a.size, \
+                    "dress3.jpg")
+                    app.crop_image_for_tile(tile_4a, tile_4a.size, \
+                    "dress4.jpg")
+                    app.crop_image_for_tile(tile_5a, tile_5a.size, \
+                    "dress2.jpg")
+                    app.crop_image_for_tile(tile_6a, tile_6a.size, \
+                    "dress1.jpg")
+                    app.crop_image_for_tile(tile_7a, tile_7a.size, \
+                    "dress4.jpg")
+                    app.crop_image_for_tile(tile_8a, tile_8a.size, \
+                    "dress3.jpg")
+                    app.crop_image_for_tile(tile_9a, tile_9a.size, \
+                    "dress2.jpg")
+
+                BoxLayout:
+                    orientation: "vertical"
+
+                    # Make a toolbar with 100% transparency, and 0 shadow.
+                    # Workaround because original bar disappears behind pictures, fix later
+                    MDToolbar:
+                        md_bg_color: 1,1,1,0
+                        elevation: 0
+
+                    ScrollView:
+                        do_scroll_x: False
+                        GridLayout:
+                            cols: 2
+                            row_default_height:
+                                (self.width - self.cols*self.spacing[0])/self.cols
+                            row_force_default: True
+                            size_hint_y: None
+                            height: self.minimum_height
+                            padding: dp(4), dp(4)
+                            spacing: dp(4)
+
+                            SmartTileWithLabel:
+                                id: tile_1a
+                                text:
+                                    "[size=20][color=#ffffff]Image 1[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                                on_release:
+                                    sm.current = 'Result'
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_2a
+                                text:
+                                    "[size=20][color=#ffffff]Image 2[/color][/size]\n[size=10]2020_09_08_1532.jpg[/size]"
+                                on_release:
+                                    sm.current = 'Result'
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_3a
+                                name: 'sdtsdaf'
+                                text:
+                                    "[size=20][color=#ffffff]Image 3[/color][/size]\n[size=10]2020_11_02_0954.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+                                on_release:
+                                    sm.current = 'Result'
+                            SmartTileWithLabel:
+                                id: tile_4a
+                                text:
+                                    "[size=20][color=#ffffff]Image 4[/color][/size]\n[size=10]2020_08_07_0822.jpg[/size]"
+                                tile_text_color: (1,1,1,0.6)
+                                on_release:
+                                    sm.current = 'Result'
+                            SmartTileWithLabel:
+                                id: tile_5a
+                                text:
+                                    "[size=20][color=#ffffff]Image 5[/color][/size]\n[size=10]2020_04_08_1432.jpg[/size]"
+                                on_release:
+                                    sm.current = 'Result'
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_6a
+                                text:
+                                    "[size=20][color=#ffffff]Image 6[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                                on_release:
+                                    sm.current = 'Result'
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_7a
+                                text:
+                                    "[size=20][color=#ffffff]Image 7[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                                on_release:
+                                    sm.current = 'Result'
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_8a
+                                text:
+                                    "[size=20][color=#ffffff]Image 8[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                                on_release:
+                                    sm.current = 'Result'
+                                tile_text_color: (1,1,1,0.6)
+                            SmartTileWithLabel:
+                                id: tile_9a
+                                text:
+                                    "[size=20][color=#ffffff]Image 9[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                                on_release:
+                                    sm.current = 'Result'
+                                tile_text_color: (1,1,1,0.6)
+
+            # Settings Screen
+            Screen:
+                name: "Settings"
+                BoxLayout:
+                    orientation: 'vertical'
+            
+            
+            
+            #screens from other .kv files, used here to add references from the main file
+            #Model/User screens, mandatory for using:
+            Main_Model_Page: 
+                name: "Main_Model_Page"
+                sm: sm
+            Create_model_page:
+                name: "Create_model_page"
+                sm: sm
+                #add reference to screen manager, so that the seprate .kv file can reference it                
+            Filechooser_Page:
+                name: "Filechooser_Page"
+                sm: sm
+            # Results Screen
+            Screen:
+                size_hint_x: 0.9
+                pos_hint: {'center_x': 0.5}
+                name: "Result"
+
+                ShadowWidget:
+                    size_hint:(1,0.53)
+                    pos_hint: {'center_x':0.5, 'center_y':0.6}
+                    elevation: 3
+                Image:
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+                    source: 'dress_pic4.jpg'
+                Button:
+                    size_hint: (0.25,0.1)
+                    pos_hint: {'center_x': 0.25, 'center_y': 0.2}
+                    text: "Save"
+                    on_release:
+                        sm.current = 'Home'
+                Button:
+                    size_hint: (0.25,0.1)
+                    pos_hint: {'center_x': 0.75, 'center_y': 0.2}
+                    text: "Discard"
+                    on_release:
+                        sm.current = 'Gallery'
+        
+            Screen:
+                name: "Photo Info"
+                size_hint_x: 0.9
+                pos_hint: {'center_x':0.5}
+                ShadowWidget:
+
+                    size_hint_y: (0.5)
+                    pos_hint: {'center_x':0.5, 'center_y':0.6}
+                    elevation: 3
+                Image:
+                    pos_hint: {'center_x':0.5, 'center_y':0.6}
+                    source: 'dress_pic3.jpg'
+
+                MDLabel:
+                    pos_hint: {'center_x':0.5, 'center_y':0.9}
+                    text: "Filename: 'dress_pic3.jpg'"
+                    color: (0,0,0,0.7)
+                MDLabel:
+                    pos_hint: {'center_x':0.5, 'center_y':0.875}
+                    text: "Dimensions: 1600x1600'"
+                    color: (0,0,0,0.7)
+                MDIconButton:
+                    icon: 'check-circle'
+                    user_font_size: "64sp"
+                    pos_hint: {'center_x':0.35, 'center_y':0.2}
+                    on_release:
+                        sm.current = 'Assortment'
+                MDIconButton:
+                    icon: 'close'
+                    user_font_size: "64sp"
+                    pos_hint: {'center_x':0.65, 'center_y':0.2}
+                    on_release:
+                        sm.current = 'Gallery'
+
+            # Hardcoded, Fix later
+            Screen:
+                name: "Photo Info 2"
+                size_hint_x: 0.9
+                pos_hint: {'center_x':0.5}
+                ShadowWidget:
+
+                    size_hint_y: (0.5)
+                    pos_hint: {'center_x':0.5, 'center_y':0.55}
+                    elevation: 3
+                Image:
+                    pos_hint: {'center_x':0.5, 'center_y':0.55}
+                    source: 'dress_pic4.jpg'
+
+                MDLabel:
+                    pos_hint: {'center_x':0.5, 'center_y':0.9}
+                    text: "Filename: 'dress_pic4.jpg'"
+                    color: (0,0,0,0.7)
+                MDLabel:
+                    pos_hint: {'center_x':0.5, 'center_y':0.875}
+                    text: "Dimensions: 1600x1600'"
+                    color: (0,0,0,0.7)
+                MDIconButton:
+                    icon: 'check-circle'
+                    user_font_size: "64sp"
+                    pos_hint: {'center_x':0.35, 'center_y':0.2}
+                    on_release:
+                        sm.current = 'Assortment'
+                MDIconButton:
+                    icon: 'close'
+                    user_font_size: "64sp"
+                    pos_hint: {'center_x':0.65, 'center_y':0.2}
+                    on_release:
+                        sm.current = 'Gallery'
+
+
+        
+        
+        
+        MDNavigationDrawer:
+            id: nav_drawer
+
+            ContentNavigationDrawer:
+                id: content_drawer
