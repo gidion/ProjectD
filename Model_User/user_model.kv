@@ -1,0 +1,23 @@
+#:kivy 1.0.9
+#file name must end on the name of the app
+
+WindowManager:
+    Main_Model_Page:
+    Create_model_page:
+    Filechooser_Page:
+
+    
+<Delete_popup>:
+    Label:
+        text: "Are you sure you want to delete your model?"
+        size_hint: 0.6, 0.2
+        pos_hint: {"x":0.2,"top": 1}
+    Button:
+        id: 'Del_button'
+        text: "Delete model"
+        size_hint: 0.6, 0.2
+        pos_hint: {"x": 0.2,"top": 0.3}
+        on_release:
+            app.root.get_screen('Main_Model_Page').Delete_model()
+            
+

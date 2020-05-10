@@ -17,12 +17,19 @@ from kivy.uix.boxlayout import BoxLayout
 import numpy as np
 
 
+import test as testerino
+
+
+
+
 #onfig.set('graphics', 'width', '412')
 #Config.set('graphics', 'height', '732')
 
 #.kv must be the same, but without App
 # Loading Multiple .kv files  
-
+Builder.load_file('Model_User/Main_Model_page.kv') 
+Builder.load_file('Model_User/Create_model_page.kv') 
+Builder.load_file('Model_User/Filechooser_page.kv') 
 
 class WindowManager(ScreenManager):
     pass
@@ -54,6 +61,7 @@ class Main_Model_Page(Screen):
         App.get_running_app().model = url
         self.ids.model_image.source = url
 
+lol = testerino.Special_specific_screen()
 
 class Filechooser_Page(Screen):    
     mangr = ScreenManager
