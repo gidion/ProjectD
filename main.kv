@@ -38,19 +38,6 @@
             size: self.size
             pos: self.pos
 
-<Delete_popup>:
-    Label:
-        text: "Are you sure you want to delete your model?"
-        size_hint: 0.6, 0.2
-        pos_hint: {"x":0.2,"top": 1}
-    Button:
-        id: 'Del_button'
-        text: "Delete model"
-        size_hint: 0.6, 0.2
-        pos_hint: {"x": 0.2,"top": 0.3}
-        on_release:
-            root.sm.get_screen('Main_Model_Page').Delete_model()
-            
 
 
 
@@ -413,6 +400,7 @@ Screen:
             Filechooser_Page:
                 name: "Filechooser_Page"
                 sm: sm
+            
             # Results Screen
             Screen:
                 size_hint_x: 0.9

@@ -32,35 +32,36 @@ WindowManager:
 
     #Edit
     Button:
-        id: 'Edit'
+        id: Edit
         text: "Edit"
         #on_release: root.btn()
         pos_hint: {"x":0.375, "y": 0.2}
         size_hint: 0.25, 0.15
         background_color: 0.9, 0.7, 0, 1
-    
+        #on_release: root.Check_existing_model()
     #Delete
     Button:
-        id: 'Delete'
+        id: Delete
         text: "Delete"
         on_release: root.Show_delete_popup()
         pos_hint: {"x":0.7, "y": 0.33}
         size_hint: 0.25, 0.15
         background_color: 1, 0, 0, 1
-
+    
 <Delete_popup>:
+    windw: None 
     Label:
         text: "Are you sure you want to delete your model?"
         size_hint: 0.6, 0.2
         pos_hint: {"x":0.2,"top": 1}
     Button:
-        id: 'Del_button'
+        id: Del_button
         text: "Delete model"
         size_hint: 0.6, 0.2
         pos_hint: {"x": 0.2,"top": 0.3}
         on_release:
-            sm.get_screen('Main_Model_Page').Delete_model()
-
+            root.sm.get_screen('Main_Model_Page').Delete_model()
+            root.windw.dismiss()
 
 
 ########
@@ -71,22 +72,23 @@ WindowManager:
     #temp image
     Image:
         id: create_image
-        pos_hint: {"top": 0.97, "x": 0.2}
+        pos_hint: {"top": 0.9, "x": 0.2}
         #           x   y
         size_hint: 0.6, 0.45
         source: 'default.jpg'
     #Camera
     Button:
-        id: 'Camera'
+        id: Camera
         text: "Camera"
         #on_release: root.btn()
         pos_hint: {"x":0.1, "y": 0.2}
         size_hint: 0.25, 0.15
         background_color: 0.9, 0.8, 0.6, 1
-    
+        on_release: 
+            root.sm.current =  "Camera"
     #Done
     Button:
-        id: 'Done'
+        id: Done
         text: "Create"
         on_release: 
             root.sm.current = "Main_Model_Page"
@@ -98,13 +100,13 @@ WindowManager:
 
      #process
     Button:
-        id: 'Process'
+        id: Process
         text: "Convert/process"
         on_release: 
             #app.root.current = "Main_Model_Page"
             #root.manager.transition.direction = "up"
             root.process()
-        pos_hint: {"x":0.375, "y": 0.3}
+        pos_hint: {"x":0.375, "y": 0.31}
         size_hint: 0.25, 0.15
         background_color: 0.9, 0.7, 0, 1
 
@@ -163,7 +165,7 @@ WindowManager:
                 #root.select(*args) 
                 root.selected(self.selection) 
         Image:
-            pos_hint: {'X': 0.8, 'y': 0}
+            pos_hint: {'X': 0.65, 'y': 0}
             size_hint: 0.4, 0.4
             id: image_show
             source: 'default.jpg'
@@ -175,7 +177,7 @@ WindowManager:
                 root.sm.current = "Create_model_page"
                 #root.manager.transition.direction = "right"
                 root.submit()
-            pos_hint: {"x":0.375, "y": 0.1}
+            pos_hint: {"x":0.55, "y": 0.1}
             size_hint: 0.25, 0.15
             background_color: 0.9, 0.7, 0, 1
 

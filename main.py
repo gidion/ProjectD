@@ -187,11 +187,17 @@ class NavDrawerAndScreenManagerApp(MDApp):
         self.openScreenName(itemdrawer.target)
         self.root.ids.nav_drawer.set_state("close")
 
+   
     def open_model(self):
         self.root.ids.sm.get_screen("Main_Model_Page")
+        
 
     def openScreenName(self, screenName):
         self.root.ids.sm.current = screenName
+        #model check for specific screen(s)
+        if(screenName == 'Main_Model_Page'):
+            #call Check_existing_model on screen enter
+            self.root.ids.sm.get_screen("Main_Model_Page").Check_existing_model()
 
     def on_start(self):
         self.root.ids.content_drawer.ids.md_list.add_widget(
@@ -205,18 +211,10 @@ class NavDrawerAndScreenManagerApp(MDApp):
                        on_release=self.openScreen)
         )
         self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Camera", text="Camera",
-                       icon="camera",
-                       on_release=self.openScreen)
-        )
-
-        self.root.ids.content_drawer.ids.md_list.add_widget(
             ItemDrawer(target="Main_Model_Page", text="Model",
                        icon="camera",
                        on_release=self.openScreen)
         )
-
-
         self.root.ids.content_drawer.ids.md_list.add_widget(
             ItemDrawer(target="Assortment", text="Assortment",
                        icon="tshirt-v",

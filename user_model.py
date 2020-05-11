@@ -15,7 +15,7 @@ import cv2
 import os
 from kivy.uix.boxlayout import BoxLayout
 import numpy as np
-
+from kivy.clock import Clock
 
 import test as testerino
 
@@ -28,32 +28,48 @@ import test as testerino
 #.kv must be the same, but without App
 # Loading Multiple .kv files  
 
-
+#old screenmanager
 class WindowManager(ScreenManager):
     pass
 
+#popup window for deleting model
+class Delete_popup(FloatLayout):
+    sm = None    
+    windw = None
+
 class Main_Model_Page(Screen):
     img = 'default.jpg'
-    #popup window for deleting model
+    #on screen enter, 
+    #def on_enter(self):
+        #after said screen is loaded
+    #    Clock.schedule_once(self.Check_existing_model, 1)
+
+    #checks for a saved model in the files
+    def Check_existing_model(self):
+        print("called")
+        if os.path.exists("processed.png"):
+            self.ids.model_image.source = "processed.png"
 
     #show the delete model popup
-    def Show_delete_popup(self):             
-        show = Delete_popup()
-        popupWindow = Popup(title="Delete Model?", content=show, size_hint=(0.7,0.7))
-        
-        #open windows     
-        popupWindow.open()
-    
-    def test(self):
-        print('yup')
+    def Show_delete_popup(self):    
+        #if there is a model to delete         
+        if os.path.exists("processed.png"):
+            show = Delete_popup()
+            show.sm = self.sm
+            popupWindow = Popup(title="Delete Model?", content=show, size_hint=(0.7,0.7))
+            show.windw = popupWindow
+            #open windows     
+            popupWindow.open()
 
     #delete the model
     def Delete_model(self):
+        #check if a model exists
+        if os.path.exists("processed.png"):
+            os.remove("processed.png")
+        #remove model from app image preview
         App.get_running_app().model = 'default.jpg'
         self.ids.model_image.source = 'default.jpg'
-        #closes popup window
-        lambda: self.popup_exit.dismiss()
-
+        
     #updates the preview(image), of the model
     def Update_model_image(self,url):
         App.get_running_app().model = url
@@ -115,5 +131,4 @@ class Create_model_page(Screen):
         self.ids.create_image.source = img_pros_url
    
 
-class Delete_popup(FloatLayout):
-    pass
+
