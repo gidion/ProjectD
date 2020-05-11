@@ -1,0 +1,116 @@
+#:kivy 1.0.9
+#:import SwapTransition kivy.uix.screenmanager.SwapTransition
+
+<Gallery_page>:
+    name: "Gallery"
+    sm : None            
+    on_enter:
+        app.crop_image_for_tile(tile_1, tile_1.size, \
+        "ph.jpg")
+        
+        app.crop_image_for_tile(tile_2, tile_2.size, \
+        "measure.png")
+        
+        app.crop_image_for_tile(tile_3, tile_3.size, \
+        "dress_pic3.jpg")
+        
+        app.crop_image_for_tile(tile_4, tile_4.size, \
+        "dress_pic4.jpg")
+        
+        app.crop_image_for_tile(tile_5, tile_5.size, \
+        "ps.jpeg")
+        
+        app.crop_image_for_tile(tile_6, tile_6.size, \
+        "ph.jpg")
+        
+        app.crop_image_for_tile(tile_7, tile_7.size, \
+        "measure.png")
+        
+        app.crop_image_for_tile(tile_8, tile_8.size, \
+        "dress_pic3.jpg")
+        
+        app.crop_image_for_tile(tile_9, tile_9.size, \
+        "dress_pic4.jpg")
+
+    BoxLayout:
+        orientation: "vertical"
+
+    # Make a toolbar with 100% transparency, and 0 shadow.
+    # Workaround because original bar disappears behind pictures, fix later
+        MDToolbar:
+            md_bg_color: 1,1,1,0
+            elevation: 0
+        ScrollView:
+            do_scroll_x: False
+            GridLayout:
+                cols: 2
+                row_default_height:
+                    (self.width - self.cols*self.spacing[0])/self.cols
+                row_force_default: True
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(4), dp(4)
+                spacing: dp(4)
+
+                SmartTileWithLabel:
+                    id: tile_1
+                    text:
+                        "[size=20][color=#ffffff]Image 1[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                    tile_text_color: (1,1,1,0.6)
+                
+                SmartTileWithLabel:
+                    id: tile_2
+                    text:
+                        "[size=20][color=#ffffff]Image 2[/color][/size]\n[size=10]2020_09_08_1532.jpg[/size]"
+                    tile_text_color: (1,1,1,0.6)
+                
+                SmartTileWithLabel:
+                    id: tile_3
+                    name: 'sdtsdaf'
+                    text:
+                        "[size=20][color=#ffffff]Image 3[/color][/size]\n[size=10]2020_11_02_0954.jpg[/size]"
+                    tile_text_color: (1,1,1,0.6)
+                    on_release:
+                        clicked_pic = self.source
+                        print(clicked_pic)
+                        sm.current = 'Photo Info'
+                
+                SmartTileWithLabel:
+                    id: tile_4
+                    text:
+                        "[size=20][color=#ffffff]Image 4[/color][/size]\n[size=10]2020_08_07_0822.jpg[/size]"
+                    tile_text_color: (1,1,1,0.6)
+                    on_release:
+                        clicked_pic = self.source
+                        print(clicked_pic)
+                        root.sm.current = 'Photo Info 2'
+                
+                SmartTileWithLabel:
+                    id: tile_5
+                    text:
+                        "[size=20][color=#ffffff]Image 5[/color][/size]\n[size=10]2020_04_08_1432.jpg[/size]"
+                    tile_text_color: (1,1,1,0.6)
+                
+                SmartTileWithLabel:
+                    id: tile_6
+                    text:
+                        "[size=20][color=#ffffff]Image 6[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                    tile_text_color: (1,1,1,0.6)
+                
+                SmartTileWithLabel:
+                    id: tile_7
+                    text:
+                        "[size=20][color=#ffffff]Image 7[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                    tile_text_color: (1,1,1,0.6)
+                
+                SmartTileWithLabel:
+                    id: tile_8
+                    text:
+                        "[size=20][color=#ffffff]Image 8[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                    tile_text_color: (1,1,1,0.6)
+                
+                SmartTileWithLabel:
+                    id: tile_9
+                    text:
+                        "[size=20][color=#ffffff]Image 9[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
+                    tile_text_color: (1,1,1,0.6)

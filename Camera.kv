@@ -1,0 +1,31 @@
+#:kivy 1.0.9
+#:import SwapTransition kivy.uix.screenmanager.SwapTransition
+
+
+
+<Camera_page>:
+    name: "Camera"
+    sm : None
+    RelativeLayout:
+
+        ShadowWidget:
+            size_hint:(0.5,0.1)
+            pos_hint: {'center_x':0.5, 'center_y':0.1}
+            elevation: 3
+        Camera:
+            id: camera
+            pos_hint: {'left':0, 'center_y': 0.6}
+            resolution: (640, 480)
+            play: False
+        MDIconButton:
+            pos_hint: {'center_x':0.4, 'center_y': 0.1}
+            icon: "pause-circle-outline" if camera.play else "play-circle-outline"
+            user_font_size: "64sp"
+            theme_text_color: "Custom"
+            on_release: camera.play = not camera.play
+        MDIconButton:
+            pos_hint: {'center_x':0.6, 'center_y': 0.1}
+            icon: "camera-plus"
+            user_font_size: "64sp"
+            theme_text_color: "Custom"
+            on_release: app.capture()

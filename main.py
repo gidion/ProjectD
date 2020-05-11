@@ -24,10 +24,14 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.lang import Builder
 from kivy.uix.popup import Popup
 
-
-
-import user_model as user_model_
+import Home as Home_
+import Gallery as Gallery_
+import Camera as Camera_
+import Model as Model_
+import Assortment as Assortment_
+import Detail as Detail_
 import numpy as np
+
 import cv2 
 import os
 
@@ -36,7 +40,12 @@ RAD_MULT = 0.25  # Blur Radius Multiplier
 
 Window.size = (450, 800)
 
-Builder.load_file('user_model.kv') 
+Builder.load_file('Home.kv') 
+Builder.load_file('Gallery.kv') 
+Builder.load_file('Camera.kv') 
+Builder.load_file('Model.kv') 
+Builder.load_file('Assortment.kv') 
+Builder.load_file('Detail.kv') 
 
 class ImageButton(ButtonBehavior, Image):
     pass
@@ -126,28 +135,6 @@ class ShadowWidget(Label):
         im = im.filter(ImageFilter.GaussianBlur(radius * RAD_MULT))
         texture.blit_buffer(im.tobytes(), colorfmt='rgba', bufferfmt='ubyte')
         return texture
-
-
-class CameraClick(BoxLayout):
-    def capture(self):
-        camera = self.ids['camera']
-        timestr = time.strftime("%Y%m%d_%H%M%S")
-        camera.export_to_png("IMG_{}.png".format(timestr))
-        print("Captured")
-
-
-class TestCamera(App):
-
-    def build(self):
-        return CameraClick()
-
-
-class CameraWindow(Screen):
-    def capture(self):
-        camera = self.ids['camera']
-        timestr = time.strftime("%Y%m%d_%H%M%S")
-        camera.export_to_png("IMG_{}.png".format(timestr))
-        print("Captured")
 
 
 class ContentNavigationDrawer(BoxLayout):
