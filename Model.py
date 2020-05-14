@@ -16,18 +16,9 @@ import os
 from kivy.uix.boxlayout import BoxLayout
 import numpy as np
 from kivy.clock import Clock
-
-import test as testerino
-
-
-
-
-
-#onfig.set('graphics', 'width', '412')
-#Config.set('graphics', 'height', '732')
+from kivy.uix.button import ButtonBehavior
 
 #.kv must be the same, but without App
-# Loading Multiple .kv files  
 
 #default model name/string
 default_model = 'default.jpg'  
@@ -35,6 +26,12 @@ default_model = 'default.jpg'
 model_png = "Model.png"
 #processed png name/string
 processed_png = "processed.png"
+
+
+class ImageButton(ButtonBehavior, Image):
+    def on_press(self):  
+        print ('pressed')
+
 
 #old screenmanager
 class WindowManager(ScreenManager):
@@ -47,6 +44,22 @@ class Delete_popup(FloatLayout):
     windw = None
 
 class Main_Model_Page(Screen):
+
+    #show the image preview model popup
+    def Show_image_popup(self,sourcee):    
+        #if there is a model to delete         
+        show = Image_popup()
+        #add screen manager reference, to popup
+        show.sm = self.sm
+        #assign preview image to popup image
+        show.ids.model_image.source = sourcee
+        #create popup window
+        popupWindow = Popup(title="Model Preview?", content=show, size_hint=(0.2,0.2))
+        #assign popupWindow as reference, in order to close it via the button
+        show.windw = popupWindow
+        #open window     
+        popupWindow.open()
+
 
     #checks for a saved model in the files
     def Check_existing_model(self):
@@ -66,11 +79,11 @@ class Main_Model_Page(Screen):
             show = Delete_popup()
             #add screen manager reference, to popup
             show.sm = self.sm
-            #create popup windows
-            popupWindow = Popup(title="Delete Model?", content=show, size_hint=(0.7,0.7))
+            #create popup window
+            popupWindow = Popup(title="Preview Model: ", content=show, size_hint=(0.7,0.7))
             #assign popupWindow as reference, in order to close it via the button
             show.windw = popupWindow
-            #open windows     
+            #open window    
             popupWindow.open()
 
     #delete the model
@@ -113,10 +126,29 @@ class Filechooser_Page(Screen):
         #reloads/refreshes the create model page image 
         self.sm.get_screen('Create_model_page').ids.create_image.reload()      
         
+#popup window for image preview model
+class Image_popup(FloatLayout):
+    #screen manager reference
+    sm = None    
+    windw = None
 
 class Create_model_page(Screen):
 
-    
+    #show the image preview model popup
+    def Show_image_popup(self,sourcee):    
+        #if there is a model to delete         
+        show = Image_popup()
+        #add screen manager reference, to popup
+        show.sm = self.sm
+        #assign preview image to popup image
+        show.ids.model_image.source = sourcee
+        #create popup window
+        popupWindow = Popup(title="Model Preview:", content=show, size_hint=(0.2,0.2))
+        #assign popupWindow as reference, in order to close it via the button
+        show.windw = popupWindow
+        #open window     
+        popupWindow.open()
+
     #update the main model page/preview/image
     def create_model(self):     
         #get process img 
@@ -125,7 +157,6 @@ class Create_model_page(Screen):
         new_model = "Model.png"
         #create new model png
         cv2.imwrite(new_model, img )
-
         #assign new model img to 
         self.sm.get_screen('Main_Model_Page').Update_model_image(new_model)
 
@@ -136,7 +167,6 @@ class Create_model_page(Screen):
         img = cv2.imread(self.ids.create_image.source)
         #new img url
         img_pros_url = "processed.png"
-
         #Image Processing steps, placeholder
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         #rgb colors
