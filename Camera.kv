@@ -16,16 +16,18 @@
             id: camera
             pos_hint: {'left':0, 'center_y': 0.6}
             resolution: (640, 480)
-            play: False
+            play: True
+        #pause button
         MDIconButton:
             pos_hint: {'center_x':0.4, 'center_y': 0.1}
             icon: "pause-circle-outline" if camera.play else "play-circle-outline"
             user_font_size: "64sp"
             theme_text_color: "Custom"
             on_release: camera.play = not camera.play
+        #capture button
         MDIconButton:
             pos_hint: {'center_x':0.6, 'center_y': 0.1}
             icon: "camera-plus"
             user_font_size: "64sp"
             theme_text_color: "Custom"
-            on_release: app.capture()
+            on_release: root.capture()

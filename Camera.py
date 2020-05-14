@@ -28,14 +28,22 @@ import cv2
 import os
 
 class Camera_page(Screen):
-    pass
+    def capture(self):
+        #get camera widget
+        camera = self.ids['camera']
+        #timestr = time.strftime("%Y%m%d_%H%M%S")
+        #export image from camera to png
+        camera.export_to_png("PIC_1.png")
+        #assign camera image, to create model page preview
+        self.sm.get_screen('Create_model_page').ids.create_image.source = "PIC_1.png"
+        #reloads/refreshes the create model page image preview
+        self.sm.get_screen('Create_model_page').ids.create_image.reload()
+        #redirect back to create model page
+        self.sm.current = 'Create_model_page'
+        #print("Captured2")
 
 class CameraClick(BoxLayout):
-    def capture(self):
-        camera = self.ids['camera']
-        timestr = time.strftime("%Y%m%d_%H%M%S")
-        camera.export_to_png("IMG_{}.png".format(timestr))
-        print("Captured")
+    pass
 
 
 class TestCamera(App):
@@ -45,8 +53,4 @@ class TestCamera(App):
 
 
 class CameraWindow(Screen):
-    def capture(self):
-        camera = self.ids['camera']
-        timestr = time.strftime("%Y%m%d_%H%M%S")
-        camera.export_to_png("IMG_{}.png".format(timestr))
-        print("Captured")
+    pass

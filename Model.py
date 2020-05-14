@@ -22,11 +22,19 @@ import test as testerino
 
 
 
+
 #onfig.set('graphics', 'width', '412')
 #Config.set('graphics', 'height', '732')
 
 #.kv must be the same, but without App
 # Loading Multiple .kv files  
+
+#default model name/string
+default_model = 'default.jpg'  
+#model png name/string
+model_png = "Model.png"
+#processed png name/string
+processed_png = "processed.png"
 
 #old screenmanager
 class WindowManager(ScreenManager):
@@ -34,29 +42,33 @@ class WindowManager(ScreenManager):
 
 #popup window for deleting model
 class Delete_popup(FloatLayout):
+    #screen manager reference
     sm = None    
     windw = None
 
 class Main_Model_Page(Screen):
-    img = 'default.jpg'
-    #on screen enter, 
-    #def on_enter(self):
-        #after said screen is loaded
-    #    Clock.schedule_once(self.Check_existing_model, 1)
 
     #checks for a saved model in the files
     def Check_existing_model(self):
-        print("called")
-        if os.path.exists("processed.png"):
-            self.ids.model_image.source = "processed.png"
+        #check if a model is already created
+        if os.path.exists("Model.png"):
+            #show model image in preview
+            self.ids.model_image.source = "Model.png"
+        else:
+            #show default image
+            self.ids.model_image.source = "default.jpg"
 
     #show the delete model popup
     def Show_delete_popup(self):    
         #if there is a model to delete         
-        if os.path.exists("processed.png"):
+        if os.path.exists("Model.png"):
+            #create popup
             show = Delete_popup()
+            #add screen manager reference, to popup
             show.sm = self.sm
+            #create popup windows
             popupWindow = Popup(title="Delete Model?", content=show, size_hint=(0.7,0.7))
+            #assign popupWindow as reference, in order to close it via the button
             show.windw = popupWindow
             #open windows     
             popupWindow.open()
@@ -64,21 +76,22 @@ class Main_Model_Page(Screen):
     #delete the model
     def Delete_model(self):
         #check if a model exists
-        if os.path.exists("processed.png"):
-            os.remove("processed.png")
+        if os.path.exists("Model.png"):
+            #remove model image
+            os.remove("Model.png")
         #remove model from app image preview
-        App.get_running_app().model = 'default.jpg'
-        self.ids.model_image.source = 'default.jpg'
+        self.ids.model_image.source = "default.jpg"
         
     #updates the preview(image), of the model
     def Update_model_image(self,url):
-        App.get_running_app().model = url
+        #updates the model image
         self.ids.model_image.source = url
-
+        #reloads/refreshes the image
+        self.ids.model_image.reload()
 
 
 class Filechooser_Page(Screen):    
-    
+
     #on selecting a item
     def selected(self, filename):
         print(filename)
@@ -86,49 +99,60 @@ class Filechooser_Page(Screen):
             self.ids.image_show.source = filename[0]
         except: 
             pass
-
+    #open a selected path/folder
     def open(self, path, filename):
        with open(os.path.join(path, filename[0])) as filee:
             print(filee.read())
     
     #submit choosen image
     def submit(self):
-        
-        #app = App.get_running_app()
-    
+        #get current selected image, by selecting img url, from the file chooser preview
         im_ = self.ids.image_show.source
-        self.ids.image_show.source = 'default.jpg'
-        self.sm.get_screen('Create_model_page').ids.create_image.source = im_       
-    
+        #assign image to create model page, image preview
+        self.sm.get_screen('Create_model_page').ids.create_image.source = im_
+        #reloads/refreshes the create model page image 
+        self.sm.get_screen('Create_model_page').ids.create_image.reload()      
+        
 
 class Create_model_page(Screen):
+
+    
     #update the main model page/preview/image
     def create_model(self):     
-        
-        #app = App.get_running_app()
-        self.sm.get_screen('Main_Model_Page').Update_model_image(self.ids.create_image.source)
-    def process(self):
+        #get process img 
         img = cv2.imread(self.ids.create_image.source)
-        self.ids.create_image.source = 'default.jpg'
-        #new img url
-        #img_pros_url = old_url[:-4] + 'processed' + '.png'
-        img_pros_url = 'processed.png'
+        #model file name
+        new_model = "Model.png"
+        #create new model png
+        cv2.imwrite(new_model, img )
 
-        #Processing
+        #assign new model img to 
+        self.sm.get_screen('Main_Model_Page').Update_model_image(new_model)
+
+    def process(self):
+        #reloads/refreshes the image 
+        self.ids.create_image.reload()
+        #opencv reads image from preview, by reading the image url, from the preview image
+        img = cv2.imread(self.ids.create_image.source)
+        #new img url
+        img_pros_url = "processed.png"
+
+        #Image Processing steps, placeholder
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         #rgb colors
         l_b = np.array([0, 32, 0])
         #hue
         u_b = np.array([255, 255, 255])
         mask = cv2.inRange(hsv, l_b, u_b)
+        #create image from processed image
         res = cv2.bitwise_and(img, img, mask=mask)
-
-
 
         #save new processed image copy
         cv2.imwrite(img_pros_url, res )
         #show processed image
         self.ids.create_image.source = img_pros_url
-   
+        #reloads/refreshes the image
+        self.ids.create_image.reload()
+        
 
 

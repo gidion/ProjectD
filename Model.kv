@@ -12,9 +12,9 @@ WindowManager:
     #temp image
     Image:
         id: model_image
-        source: root.img
+        source: "default.jpg"
 
-        pos_hint: {"top": 0.97, "x": 0.2}
+        pos_hint: {"x": 0.2, "top": 0.87 }
         #           x   y
         size_hint: 0.6, 0.45
         #on_release:
@@ -23,7 +23,7 @@ WindowManager:
     Button:
         id: 'Create'
         text: "Create Model"
-        pos_hint: {"x":0.05, "y": 0.33}
+        pos_hint: {"x":0.05, "y": 0.23}
         size_hint: 0.25, 0.15
         background_color: 0.9, 0.8, 0.6, 1
         on_release: 
@@ -35,7 +35,7 @@ WindowManager:
         id: Edit
         text: "Edit"
         #on_release: root.btn()
-        pos_hint: {"x":0.375, "y": 0.2}
+        pos_hint: {"x":0.375, "y": 0.1}
         size_hint: 0.25, 0.15
         background_color: 0.9, 0.7, 0, 1
         #on_release: root.Check_existing_model()
@@ -44,7 +44,7 @@ WindowManager:
         id: Delete
         text: "Delete"
         on_release: root.Show_delete_popup()
-        pos_hint: {"x":0.7, "y": 0.33}
+        pos_hint: {"x":0.7, "y": 0.23}
         size_hint: 0.25, 0.15
         background_color: 1, 0, 0, 1
     
@@ -75,7 +75,7 @@ WindowManager:
         pos_hint: {"top": 0.9, "x": 0.2}
         #           x   y
         size_hint: 0.6, 0.45
-        source: 'default.jpg'
+        source: "default.jpg"
     #Camera
     Button:
         id: Camera
@@ -168,7 +168,7 @@ WindowManager:
             pos_hint: {'X': 0.65, 'y': 0}
             size_hint: 0.4, 0.4
             id: image_show
-            source: 'default.jpg'
+            source: "default.jpg"
             
         Button:
             id: 'Submit'
