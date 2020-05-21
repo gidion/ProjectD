@@ -29,4 +29,10 @@ import cv2
 import os
 
 class Detail_page(Screen):
+    def Update_Page(self,product):
+        self.ids.image_product.source = product.img_url
+        self.ids.image_product.reload()
+        #self.image_product = url 
+        #lines that change detail properties
+        pass 
     pass

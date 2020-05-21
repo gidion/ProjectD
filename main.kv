@@ -15,10 +15,6 @@
         theme_text_color: "Custom"
         text_color: root.text_color
 
-<MySmartTileWithLabel@SmartTileWithLabel>:
-    mipmap: True
-    font_style: "Subhead"
-
 <ShadowWidget>
     color: (1, 0, 0, 1)
     canvas.before:
@@ -146,30 +142,10 @@ Screen:
                     orientation: 'vertical'
                                                    
             # Results Screen
-            Detail_page:
-                size_hint_x: 0.9
-                pos_hint: {'center_x': 0.5}
+            Detail_page:               
                 name: "Result"
                 sm: sm
-                ShadowWidget:
-                    size_hint:(1,0.53)
-                    pos_hint: {'center_x':0.5, 'center_y':0.6}
-                    elevation: 3
-                Image:
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
-                    source: 'dress_pic4.jpg'
-                Button:
-                    size_hint: (0.25,0.1)
-                    pos_hint: {'center_x': 0.25, 'center_y': 0.2}
-                    text: "Save"
-                    on_release:
-                        sm.current = 'Home'
-                Button:
-                    size_hint: (0.25,0.1)
-                    pos_hint: {'center_x': 0.75, 'center_y': 0.2}
-                    text: "Discard"
-                    on_release:
-                        sm.current = 'Gallery'
+                
         
             Screen:
                 name: "Photo Info"

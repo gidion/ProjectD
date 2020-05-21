@@ -1,38 +1,23 @@
 #:kivy 1.0.9
 #:import SwapTransition kivy.uix.screenmanager.SwapTransition
 
+
+<MySmartTileWithLabel@SmartTileWithLabel>:
+    sm: None
+    mipmap: True
+    product: None
+    #subhead doesnt work??
+    font_style: "Subtitle1"
+    on_release:
+        #update detail page, with the selected product info
+        self.sm.get_screen("Result").Update_Page(self.product)
+        self.sm.current = 'Result'
+    tile_text_color: (1,1,1,0.6)
+
 # Assortment Screen
 <Assortment_page>:
     name: "Assortment"
     sm : None
-    on_enter:
-        app.crop_image_for_tile(tile_1a, tile_1a.size, \
-        "dress1.jpg")
-        
-        app.crop_image_for_tile(tile_2a, tile_2a.size, \
-        "dress2.jpg")
-        
-        app.crop_image_for_tile(tile_3a, tile_3a.size, \
-        "dress3.jpg")
-        
-        app.crop_image_for_tile(tile_4a, tile_4a.size, \
-        "dress4.jpg")
-        
-        app.crop_image_for_tile(tile_5a, tile_5a.size, \
-        "dress2.jpg")
-        
-        app.crop_image_for_tile(tile_6a, tile_6a.size, \
-        "dress1.jpg")
-        
-        app.crop_image_for_tile(tile_7a, tile_7a.size, \
-        "dress4.jpg")
-        
-        app.crop_image_for_tile(tile_8a, tile_8a.size, \
-        "dress3.jpg")
-        
-        app.crop_image_for_tile(tile_9a, tile_9a.size, \
-        "dress2.jpg")
-
     BoxLayout:
         orientation: "vertical"
         # Make a toolbar with 100% transparency, and 0 shadow.
@@ -44,6 +29,7 @@
         ScrollView:
             do_scroll_x: False
             GridLayout:
+                id: Items_Grid
                 cols: 2
                 row_default_height:
                     (self.width - self.cols*self.spacing[0])/self.cols
@@ -53,75 +39,4 @@
                 padding: dp(4), dp(4)
                 spacing: dp(4)
                  
-                SmartTileWithLabel:
-                    id: tile_1a
-                    text:
-                        "[size=20][color=#ffffff]Image 1[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
-                    on_release:
-                        root.sm.current = 'Result'
-                    tile_text_color: (1,1,1,0.6)
-                
-                SmartTileWithLabel:
-                    id: tile_2a
-                    text:
-                        "[size=20][color=#ffffff]Image 2[/color][/size]\n[size=10]2020_09_08_1532.jpg[/size]"
-                    on_release:
-                        root.sm.current = 'Result'
-                    tile_text_color: (1,1,1,0.6)
-                
-                SmartTileWithLabel:
-                    id: tile_3a
-                    name: 'sdtsdaf'
-                    text:
-                        "[size=20][color=#ffffff]Image 3[/color][/size]\n[size=10]2020_11_02_0954.jpg[/size]"
-                    tile_text_color: (1,1,1,0.6)
-                    on_release:
-                        root.sm.current = 'Result'
-                
-                SmartTileWithLabel:
-                    id: tile_4a
-                    text:
-                        "[size=20][color=#ffffff]Image 4[/color][/size]\n[size=10]2020_08_07_0822.jpg[/size]"
-                    tile_text_color: (1,1,1,0.6)
-                    on_release:
-                        root.sm.current = 'Result'
-                
-                SmartTileWithLabel:
-                    id: tile_5a
-                    text:
-                        "[size=20][color=#ffffff]Image 5[/color][/size]\n[size=10]2020_04_08_1432.jpg[/size]"
-                    on_release:
-                        root.sm.current = 'Result'
-                    tile_text_color: (1,1,1,0.6)
-                
-                SmartTileWithLabel:
-                    id: tile_6a
-                    text:
-                        "[size=20][color=#ffffff]Image 6[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
-                    on_release:
-                        root.sm.current = 'Result'
-                    tile_text_color: (1,1,1,0.6)
                
-                SmartTileWithLabel:
-                    id: tile_7a
-                    text:
-                        "[size=20][color=#ffffff]Image 7[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
-                    on_release:
-                        root.sm.current = 'Result'
-                    tile_text_color: (1,1,1,0.6)
-                
-                SmartTileWithLabel:
-                    id: tile_8a
-                    text:
-                        "[size=20][color=#ffffff]Image 8[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
-                    on_release:
-                        root.sm.current = 'Result'
-                    tile_text_color: (1,1,1,0.6)
-                
-                SmartTileWithLabel:
-                    id: tile_9a
-                    text:
-                        "[size=20][color=#ffffff]Image 9[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]"
-                    on_release:
-                        root.sm.current = 'Result'
-                    tile_text_color: (1,1,1,0.6)
