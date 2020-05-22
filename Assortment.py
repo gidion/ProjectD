@@ -30,9 +30,9 @@ import os
 Builder.load_file('Assortment.kv')
 
 class Product_item():
-    id: -1
+    id = -1
     product_name = ''
-    img_url: ''
+    img_url =  ''
     link = 'www.google.com'
     text = ''
     def __init__(self, id, product_name,img_url,link,text):
@@ -45,7 +45,7 @@ class Product_item():
 class MySmartTileWithLabel(SmartTileWithLabel):
     pass
 #temp products list, to be replaced with a list made from the database
-temp_list = [Product_item('0','dress1','dress1.jpg','www.google.com','Image 1'),Product_item('1','dress2','dress2.jpg','www.google.com','Image 2'),Product_item('2','dress3','dress3.jpg','www.google.com','Image 3'),Product_item('3','dress4','dress4.jpg','www.google.com','Image 4')]
+temp_list = [Product_item('0','dress1','dress1.jpg',"http://google.com/",'Image 1'),Product_item('1','dress2','dress2.jpg',"http://google.com/",'Image 2'),Product_item('2','dress3','dress3.jpg','www.google.com','Image 3'),Product_item('3','dress4','dress4.jpg','www.google.com','Image 4')]
 
 class Assortment_page(Screen):
     sm: None

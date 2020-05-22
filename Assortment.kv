@@ -10,8 +10,8 @@
     font_style: "Subtitle1"
     on_release:
         #update detail page, with the selected product info
-        self.sm.get_screen("Result").Update_Page(self.product)
-        self.sm.current = 'Result'
+        self.sm.get_screen("Detail_product").Update_Page(self.product,self.sm)
+        self.sm.current = 'Detail_product'
     tile_text_color: (1,1,1,0.6)
 
 # Assortment Screen

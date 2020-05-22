@@ -24,14 +24,23 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.lang import Builder
 from kivy.uix.popup import Popup
 
+import webbrowser
 import numpy as np
 import cv2 
 import os
 
 class Detail_page(Screen):
-    def Update_Page(self,product):
+
+    def To_store(self,url):
+        webbrowser.open(url)
+
+    def Update_Page(self,product,sm):
+        self.sm = sm
         self.ids.image_product.source = product.img_url
         self.ids.image_product.reload()
+        self.ids.Product_name.text = product.product_name
+        self.ids.Product_name.Product_text = product.text
+        self.Weblink = product.link
         #self.image_product = url 
         #lines that change detail properties
         pass 

@@ -5,25 +5,43 @@
 <Detail_page>:
     size_hint_x: 0.9
     pos_hint: {'center_x': 0.5}
-    name: "Product"
+    name: "Detail_product"
     sm: None
+    weblink: None
     ShadowWidget:
         size_hint:(1,0.53)
         pos_hint: {'center_x':0.5, 'center_y':0.6}
         elevation: 3 
+    
+    MDLabel:
+        id: Product_name
+        pos_hint: {'center_x':0.5, 'center_y':0.9}
+        text: "Productname"
+        color: (0,0,0,1)
+    MDLabel:
+        id: Product_text
+        pos_hint: {'center_x':0.5, 'center_y':0.3}
+        text: "Description"
+        color: (0,0,0,0.7) 
     Image:
         id: image_product
         pos_hint: {'center_x': 0.5, 'center_y': 0.6}
         source: 'dress_pic4.jpg'  
     Button:
         size_hint: (0.25,0.1)
-        pos_hint: {'center_x': 0.25, 'center_y': 0.2}
-        text: "Save"
+        pos_hint: {'center_x': 0.25, 'center_y': 0.07}
+        text: "Check in store"
         on_release:
-            sm.current = 'Home'
+            root.To_store(root.Weblink)
     Button:
         size_hint: (0.25,0.1)
-        pos_hint: {'center_x': 0.75, 'center_y': 0.2}
-        text: "Discard"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.07}
+        text: "Try On"
         on_release:
-            sm.current = 'Gallery'    
+            root.sm.current = 'Try_out'
+    Button:
+        size_hint: (0.25,0.1)
+        pos_hint: {'center_x': 0.75, 'center_y': 0.07}
+        text: "Go Back"
+        on_release:
+            root.sm.current = 'Assortment'    
