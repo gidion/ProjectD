@@ -1,0 +1,51 @@
+#:kivy 1.0.9
+#:import SwapTransition kivy.uix.screenmanager.SwapTransition
+
+# Assortment Screen
+<Combine_page>:
+    size_hint_x: 0.9
+    pos_hint: {'center_x': 0.5}
+    name: "Combine_page"
+    product: None
+    sm: None
+    
+    MDLabel:
+        id: Product_name
+        pos_hint: {'center_x':0.5, 'center_y':0.9}
+        text: "Productname"
+        color: (0,0,0,1)
+    
+    #product
+    Image:
+        size_hint: 0.4, 0.4
+        id: image_product
+        pos_hint: {'center_x': 0.2, 'center_y': 0.3}
+        source: 'dress_pic4.jpg'  
+    #combined model and product
+    Image:
+        id: combined
+        size_hint: 0.5, 0.5
+        pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+        source: 'default.jpg'  
+    #user model
+    Image:
+        id: model
+        size_hint: 0.4, 0.4
+        pos_hint: {'center_x': 0.8, 'center_y': 0.3}
+        source: ''  
+
+    Button:
+        size_hint: (0.25,0.1)
+        pos_hint: {'center_x': 0.2, 'center_y': 0.07}
+        text: "Try On"
+        on_release:
+            root.Temp_Combine()
+
+
+    Button:
+        size_hint: (0.25,0.1)
+        pos_hint: {'center_x': 0.8, 'center_y': 0.07}
+        text: "Go Back"
+        on_release:
+            root.sm.get_screen("Detail_product").Update_Page(root.product,root.sm)
+            root.sm.current = 'Detail_product'

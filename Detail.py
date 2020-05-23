@@ -40,8 +40,7 @@ class Detail_page(Screen):
         self.ids.image_product.reload()
         self.ids.Product_name.text = product.product_name
         self.ids.Product_name.Product_text = product.text
-        self.Weblink = product.link
+        self.product = product
         #self.image_product = url 
         #lines that change detail properties
-        pass 
-    pass
+    

@@ -32,8 +32,11 @@ Builder.load_file('Assortment.kv')
 class Product_item():
     id = -1
     product_name = ''
+    #file path to image
     img_url =  ''
+    #web link to product on webshop
     link = 'www.google.com'
+    #desciption or summary of the product
     text = ''
     def __init__(self, id, product_name,img_url,link,text):
         self.id = id

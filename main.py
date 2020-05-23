@@ -29,6 +29,8 @@ import Gallery as Gallery_
 import Camera as Camera_
 import Model as Model_
 import Assortment as Assortment_
+import Combine as Combine_
+
 import Detail as Detail_
 import numpy as np
 
@@ -46,6 +48,7 @@ Builder.load_file('Camera.kv')
 Builder.load_file('Model.kv') 
 Builder.load_file('Assortment.kv') 
 Builder.load_file('Detail.kv') 
+Builder.load_file('Combine.kv') 
 
 class ImageButton(ButtonBehavior, Image):
     pass
