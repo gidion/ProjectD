@@ -28,6 +28,21 @@ import webbrowser
 import numpy as np
 import cv2 
 import os
+import json
+
+class Combination_item():
+    id = -1
+    product_name = ''
+    #file path to image
+    img_url =  ''
+    #web link to product on webshop
+    link = 'www.google.com'
+    def __init__(self, id, product_name,img_url,link):
+        self.id = id
+        self.product_name = product_name
+        self.img_url = img_url
+        self.link = link
+
 
 class Combine_page(Screen):
 
@@ -71,10 +86,6 @@ class Combine_page(Screen):
         #cropt images
         img_product = cv2.resize(img_product, (512,512) )
         img_person = cv2.resize(img_person,(512,512))
-
-        #calculates the per element sum of 2 arrays or an array and a scalar
-        #dst_image = cv2.add(img,img2)
-
         #add with weighted          img alpha  img2 alpha  gamma
         result_img = cv2.addWeighted(img_product, 1, img_person, 1, 0)
         #save new processed image copy
@@ -84,4 +95,73 @@ class Combine_page(Screen):
         #reloads/refreshes the image
         self.ids.combined.reload()
         pass
-    pass
+    #save and add a new combination to the user combinations, by loading the current combinations, add the new combination to the list, and then save the updated combinations 
+    def Save_Combination(self,product,combined_url):
+        combinations = []
+        #try to load 
+        combinations = self.Load_combinations(True)
+        
+        #assign id value
+        new_id = 0
+        #if previous combinations exist
+        if len(combinations) >= 1:
+            #get new id from previous combination id + 1
+            new_id = combinations[len(combinations) -1]["id"] + 1
+
+        #save combined image to file, as a separate file
+        img_product = cv2.imread(combined_url)
+        #get time 
+        timestr = time.strftime("%Y%m%d_%H%M%S")
+        #set file name for combination file
+        img_name = ("Combination_{}.png".format(timestr))
+        #create image file
+        cv2.imwrite(img_name, img_product )
+
+        #create dict
+        combinations_dict = {
+            "id" : new_id,
+            "product_name" : product.product_name,
+            "img_url" : img_name,
+            "link" : product.link
+            }
+        #add new combination to existing combination list
+        combinations.append(combinations_dict)    
+        #call save function
+        self.Save_Combinations(combinations)
+        #go to new combination page
+        self.sm.get_screen("Combination_page").Update_Page(product,self.sm,combinations_dict["id"])
+        self.sm.current = 'Combination_page'
+
+
+
+    def Save_Combinations(self,combinations_app):
+        #save all combinations
+        with open('Combinations.json', 'w') as file_combinations:
+            json.dump(combinations_app, file_combinations)
+        file_combinations.close()
+
+    def Load_combinations(self,in_json):
+        #combinations dict
+        loaded_combinations = {}
+        #list combinations
+        Combinations = []
+        #try to open combinations file
+        try:
+            with open('Combinations.json', 'r') as file_combinations:  
+                loaded_combinations = json.load(file_combinations)
+            file_combinations.close()
+        #if there is no file
+        except:
+            loaded_combinations = []
+        #return class list of combinations
+        if in_json:
+            return loaded_combinations
+        #return json dict of combinations
+        for combination in loaded_combinations:
+            new_combination = Combination_item(
+                combination['id'],
+                combination['product_name'],
+                combination['img_url'],
+                combination['link'])
+            Combinations.append(new_combination)       
+        return Combinations

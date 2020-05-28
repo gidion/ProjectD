@@ -30,6 +30,8 @@ import Camera as Camera_
 import Model as Model_
 import Assortment as Assortment_
 import Combine as Combine_
+import Combination as Combination_
+
 
 import Detail as Detail_
 import numpy as np
@@ -49,6 +51,7 @@ Builder.load_file('Model.kv')
 Builder.load_file('Assortment.kv') 
 Builder.load_file('Detail.kv') 
 Builder.load_file('Combine.kv') 
+Builder.load_file('Combination.kv') 
 
 class ImageButton(ButtonBehavior, Image):
     pass
@@ -162,7 +165,10 @@ class DrawerList(ThemableBehavior, MDList):
 
 
 class NavDrawerAndScreenManagerApp(MDApp):
-
+    #to make sure the assortment page only retrieves the products once
+    done_assortment = False
+    #to make sure the gallery page only retrieves the combinations once
+    done_gallery = False
     def crop_image_for_tile(self, instance, size, path_to_crop_image):
         if not os.path.exists(os.path.join(self.directory, path_to_crop_image)):
             size = (int(size[0]), int(size[1]))

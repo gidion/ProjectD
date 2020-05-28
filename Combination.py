@@ -23,15 +23,13 @@ from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.lang import Builder
 from kivy.uix.popup import Popup
-from kivymd.uix.imagelist import SmartTileWithLabel
 
-import json
+import webbrowser
 import numpy as np
 import cv2 
 import os
+import json
 import Gallery as Gallery_
-
-
 class Combination_item():
     id = -1
     product_name = ''
@@ -45,46 +43,56 @@ class Combination_item():
         self.img_url = img_url
         self.link = link
 
-class Gallery_page(Screen):
-    sm: None
-    def on_enter(self):
-        #load saved combinations from file
-        temp_list = self.Load_combinations(False)
-        #refresh/show gallery items
-        self.Show_combinations(self.ids.Items_Grid,temp_list)
-    
-    def Show_combinations(self,Item_Grid,combinations):
-        #remove previous gallery items from grid layout
-        Item_Grid.clear_widgets()
+class Combination_page(Screen):
 
-        #loop through each combinations
-        for item in combinations:
-            #combine the products text into the widgets text
-            main_text =  '[size=20][color=#ffffff]' + str(item.product_name) + '[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]'
-            #create widget MySmartTileWithLabel
-            temp = CombSmartTileWithLabel(id = str(item.id))
-            #assign screen manager to CombSmartTileWithLabel widget, without using the init
-            temp.sm = self.sm
-            #assign the product info to the CombSmartTileWithLabel
-            temp.product = item
-            #assign combination id
-            temp.comb_id = item.id
-            #add the widget to the gridlayout
-            Item_Grid.add_widget(temp)           
-            #crop the image for the gallery
-            try:
-                App.get_running_app().crop_image_for_tile(temp, temp.size, \
-                item.img_url)
-            #combination image is not found/missing
-            except:
-                App.get_running_app().crop_image_for_tile(temp, temp.size, \
-                'default.jpg'  )
-            temp.reload()
-          
+    def To_store(self,url):
+        webbrowser.open(url)
+
+    def Update_Page(self,product,sm,comb_id):
+        self.sm = sm
+        self.id
+        self.ids.image_product.source = product.img_url
+        self.ids.image_product.reload()
+        self.ids.Product_name.text = product.product_name
+        self.product = product
+        self.comb_id = comb_id
+        #self.image_product = url 
+        #lines that change detail properties
+    
+    def Delete_Combination(self,product,combined_url,combination_id):
+        #combinations list
+        combinations = []
+        #load combinations from file
+        combinations = self.Load_combinations(True)
+        #for each combination in combinations
+        for comb in combinations:
+            #if combinaiton id == id of current combination page id
+            if comb["id"] == combination_id:
+                #delete image, if it exists
+                try:
+                    if(comb["img_url"] != "default.jpg"):
+                        os.remove(comb["img_url"]) 
+                #image isn't found
+                except:
+                    pass
+                #delete combination
+                combinations.remove(comb)
+                
+        #call save function
+        self.Save_Combinations(combinations)
+        #go back to gallery
+        self.sm.current = 'Gallery'
+
+    def Save_Combinations(self,combinations_app):
+        #save all combinations
+        with open('Combinations.json', 'w') as file_combinations:
+            json.dump(combinations_app, file_combinations)
+        file_combinations.close()
+    
     def Load_combinations(self,in_json):
-        #combinations in dict/json
+        #combinations dict
         loaded_combinations = {}
-        #combinations as class objects
+        #list combinations
         Combinations = []
         #try to open combinations file
         try:
@@ -94,11 +102,9 @@ class Gallery_page(Screen):
         #if there is no file
         except:
             loaded_combinations = []
-
         #return class list of combinations
         if in_json:
             return loaded_combinations
-        
         #return json dict of combinations
         for combination in loaded_combinations:
             new_combination = Combination_item(
@@ -108,11 +114,3 @@ class Gallery_page(Screen):
                 combination['link'])
             Combinations.append(new_combination)       
         return Combinations
-
-
-
-
-        
-class CombSmartTileWithLabel(SmartTileWithLabel):
-    pass
-

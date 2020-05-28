@@ -53,18 +53,20 @@ temp_list = [Product_item('0','dress1','dress1.jpg',"http://google.com/",'Image 
 class Assortment_page(Screen):
     sm: None
     def on_enter(self):
-        for item in temp_list:
-            #combine the products text into the widgets text
-            main_text =  '[size=20][color=#ffffff]' + str(item.product_name) + '[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]'
-            #create widget MySmartTileWithLabel
-            temp = MySmartTileWithLabel(id = item.id, text = main_text)
-            #assign screen manager to MySmartTileWithLabel widget, without using the init
-            temp.sm = self.sm
-            #assign the product info to the MySmartTileWithLabel
-            temp.product = item
-            #add the widget to the gridlayout
-            self.ids.Items_Grid.add_widget(temp)
-            #crop the image for the gallery
-            App.get_running_app().crop_image_for_tile(temp, temp.size, \
-            item.img_url)
+        if(not(App.get_running_app().done_assortment)):
+            for item in temp_list:
+                #combine the products text into the widgets text
+                main_text =  '[size=20][color=#ffffff]' + str(item.product_name) + '[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]'
+                #create widget MySmartTileWithLabel
+                temp = MySmartTileWithLabel(id = item.id, text = main_text)
+                #assign screen manager to MySmartTileWithLabel widget, without using the init
+                temp.sm = self.sm
+                #assign the product info to the MySmartTileWithLabel
+                temp.product = item
+                #add the widget to the gridlayout
+                self.ids.Items_Grid.add_widget(temp)
+                #crop the image for the gallery
+                App.get_running_app().crop_image_for_tile(temp, temp.size, \
+                item.img_url)
+        App.get_running_app().done_assortment = True
     pass

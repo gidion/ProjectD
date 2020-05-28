@@ -8,6 +8,7 @@
     name: "Combine_page"
     product: None
     sm: None
+    comb_id: -1
     
     MDLabel:
         id: Product_name
@@ -40,7 +41,12 @@
         text: "Try On"
         on_release:
             root.Temp_Combine()
-
+    Button:
+        size_hint: (0.25,0.1)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.07}
+        text: "Save"
+        on_release:
+            root.Save_Combination(root.product,root.ids.combined.source)
 
     Button:
         size_hint: (0.25,0.1)
