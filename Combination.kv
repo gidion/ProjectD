@@ -45,6 +45,20 @@
         pos_hint: {'center_x': 0.75, 'center_y': 0.07}
         text: "Delete"
         on_release:
-            root.Delete_Combination(root.product,root.ids.image_product.source,root.comb_id)
-            root.sm.current = 'Gallery'  
-            
+            root.Show_delete_popup_combination()
+            #root.sm.current = 'Gallery'
+
+<Delete_popup_combination>:
+    windw: None 
+    Label:
+        text: "Are you sure you want to delete your combination?"
+        size_hint: 0.6, 0.2
+        pos_hint: {"x":0.2,"top": 1}
+    Button:
+        id: Del_button
+        text: "Delete model"
+        size_hint: 0.6, 0.2
+        pos_hint: {"x": 0.2,"top": 0.3}
+        on_release:           
+            root.sm.get_screen('Combination_page').Delete_Combination(root.sm.get_screen('Combination_page').product, root.sm.get_screen('Combination_page').ids.image_product.source, root.sm.get_screen('Combination_page').comb_id)
+            root.windw.dismiss()            

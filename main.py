@@ -74,7 +74,7 @@ class ShadowWidget(Label):
         1: (1, 3, 0.12, 1, 2, 0.24),
         2: (3, 6, 0.16, 3, 6, 0.23),
         3: (10, 20, 0.19, 6, 6, 0.23),
-        4: (14, 28, 0.25, 10, 10, 0.22),
+        4: (14, 28, 0.25, 10, 10, 0.22),   
         5: (19, 38, 0.30, 15, 12, 0.22)
     }
 
@@ -196,32 +196,18 @@ class NavDrawerAndScreenManagerApp(MDApp):
             self.root.ids.sm.get_screen("Main_Model_Page").Check_existing_model()
 
     def on_start(self):
-        self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Home", text="Home",
-                       icon="home-circle-outline",
-                       on_release=self.openScreen)
-        )
-        self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Gallery", text="Gallery",
-                       icon="image-multiple",
-                       on_release=self.openScreen)
-        )
-        self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Main_Model_Page", text="Model",
-                       icon="camera",
-                       on_release=self.openScreen)
-        )
-        self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Assortment", text="Assortment",
-                       icon="tshirt-v",
-                       on_release=self.openScreen)
-        )
-        self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Settings", text="Settings",
-                       icon="settings-outline",
-                       on_release=self.openScreen)
-        )
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Home", "Home", "home-circle-outline", self)
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Gallery", "Gallery", "image-multiple", self)
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Main_Model_Page", "Model", "camera", self)
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Assortment", "Assortment", "tshirt-v", self)
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Settings", "Settings", "settings-outline", self)     
 
+def add_menu_item(_parent_widget, _target, _Text, _icon, _self):
+    _parent_widget.add_widget(
+        ItemDrawer(target=_target, text=_Text,
+                icon=_icon,
+                on_release=_self.openScreen)
+    )
 
 if __name__ == "__main__":
     NavDrawerAndScreenManagerApp().run()

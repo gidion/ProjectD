@@ -43,6 +43,12 @@ class Combination_item():
         self.img_url = img_url
         self.link = link
 
+#popup window for deleting combination
+class Delete_popup_combination(FloatLayout):
+    #screen manager reference
+    sm = None    
+    windw = None
+
 class Combination_page(Screen):
 
     def To_store(self,url):
@@ -58,7 +64,23 @@ class Combination_page(Screen):
         self.comb_id = comb_id
         #self.image_product = url 
         #lines that change detail properties
-    
+
+
+    #shows delete popu[]
+    def Show_delete_popup_combination(self):    
+        #if there is a model to delete         
+        
+        #create popup
+        show = Delete_popup_combination()
+        #add screen manager reference, to popup
+        show.sm = self.sm
+        #create popup window
+        popupWindow = Popup(title="Delete combination: ", content=show, size_hint=(0.7,0.7))
+        #assign popupWindow as reference, in order to close it via the button
+        show.windw = popupWindow
+        #open window    
+        popupWindow.open()
+
     def Delete_Combination(self,product,combined_url,combination_id):
         #combinations list
         combinations = []
