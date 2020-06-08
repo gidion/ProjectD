@@ -28,6 +28,23 @@ import cv2
 import os
 
 class Camera_page(Screen):
+    def on_pre_enter(self):
+        try:
+            camera = self.ids['camera']
+            camera.pos_hint = {'left':0, 'center_y': 0.6}
+            camera.resolution = (640, 480)
+            camera.play = True
+        except:
+            pass
+    def check_camera(self):
+        try:
+            camera = self.ids['camera']
+            camera.pos_hint = {'left':0, 'center_y': 0.6}
+            camera.resolution = (640, 480)
+            camera.play = True
+            return True
+        except:
+            return False
     def capture(self):
         #get camera widget
         camera = self.ids['camera']

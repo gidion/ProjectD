@@ -136,6 +136,9 @@ class Image_popup(FloatLayout):
     windw = None
 
 class Create_model_page(Screen):
+    def on_pre_enter(self):
+        if not(self.sm.get_screen("Camera").check_camera()):
+            self.ids['Camera'].disabled = True
 
     #show the image preview model popup
     def Show_image_popup(self,sourcee):    
@@ -154,39 +157,41 @@ class Create_model_page(Screen):
         popupWindow.open()
 
     #update the main model page/preview/image
-    def create_model(self):     
-        #get process img 
-        img = cv2.imread(self.ids.create_image.source)
-        #model file name
-        new_model = "Model.png"
-        #create new model png
-        cv2.imwrite(new_model, img )
-        #assign new model img to 
-        self.sm.get_screen('Main_Model_Page').Update_model_image(new_model)
+    def create_model(self):  
+        if self.ids.create_image.source != 'default.jpg':
+            #get process img 
+            img = cv2.imread(self.ids.create_image.source)
+            #model file name
+            new_model = "Model.png"
+            #create new model png
+            cv2.imwrite(new_model, img )
+            #assign new model img to 
+            self.sm.get_screen('Main_Model_Page').Update_model_image(new_model)
 
     def process(self):
-        #reloads/refreshes the image 
-        self.ids.create_image.reload()
-        #opencv reads image from preview, by reading the image url, from the preview image
-        img = cv2.imread(self.ids.create_image.source)
-        #new img url
-        img_pros_url = "processed.png"
-        #Image Processing steps, placeholder
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        #rgb colors
-        l_b = np.array([0, 32, 0])
-        #hue
-        u_b = np.array([255, 255, 255])
-        mask = cv2.inRange(hsv, l_b, u_b)
-        #create image from processed image
-        res = cv2.bitwise_and(img, img, mask=mask)
+        if self.ids.create_image.source != 'default.jpg':
+            #reloads/refreshes the image 
+            self.ids.create_image.reload()
+            #opencv reads image from preview, by reading the image url, from the preview image
+            img = cv2.imread(self.ids.create_image.source)
+            #new img url
+            img_pros_url = "processed.png"
+            #Image Processing steps, placeholder
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            #rgb colors
+            l_b = np.array([0, 32, 0])
+            #hue
+            u_b = np.array([255, 255, 255])
+            mask = cv2.inRange(hsv, l_b, u_b)
+            #create image from processed image
+            res = cv2.bitwise_and(img, img, mask=mask)
 
-        #save new processed image copy
-        cv2.imwrite(img_pros_url, res )
-        #show processed image
-        self.ids.create_image.source = img_pros_url
-        #reloads/refreshes the image
-        self.ids.create_image.reload()
+            #save new processed image copy
+            cv2.imwrite(img_pros_url, res )
+            #show processed image
+            self.ids.create_image.source = img_pros_url
+            #reloads/refreshes the image
+            self.ids.create_image.reload()
         
 
 

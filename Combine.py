@@ -62,6 +62,9 @@ class Combine_page(Screen):
             #remove model image
             self.ids.model.source = "Model.png"
             self.ids.model.reload()
+        else:
+            self.ids.model.source = "default.jpg"
+            self.ids.model.reload()
         #self.image_product = url 
         #lines that change detail properties
         pass 
