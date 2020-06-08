@@ -61,6 +61,7 @@ class Combine_page(Screen):
         if os.path.exists("Model.png"):
             #remove model image
             self.ids.model.source = "Model.png"
+            self.ids.model.reload()
         #self.image_product = url 
         #lines that change detail properties
         pass 
@@ -97,40 +98,43 @@ class Combine_page(Screen):
         pass
     #save and add a new combination to the user combinations, by loading the current combinations, add the new combination to the list, and then save the updated combinations 
     def Save_Combination(self,product,combined_url):
-        combinations = []
-        #try to load 
-        combinations = self.Load_combinations(True)
-        
-        #assign id value
-        new_id = 0
-        #if previous combinations exist
-        if len(combinations) >= 1:
-            #get new id from previous combination id + 1
-            new_id = combinations[len(combinations) -1]["id"] + 1
+        if combined_url != 'default.jpg':
+            combinations = []
+            #try to load 
+            combinations = self.Load_combinations(True)
+            
+            #assign id value
+            new_id = 0
+            #if previous combinations exist
+            if len(combinations) >= 1:
+                #get new id from previous combination id + 1
+                new_id = combinations[len(combinations) -1]["id"] + 1
 
-        #save combined image to file, as a separate file
-        img_product = cv2.imread(combined_url)
-        #get time 
-        timestr = time.strftime("%Y%m%d_%H%M%S")
-        #set file name for combination file
-        img_name = ("Combination_{}.png".format(timestr))
-        #create image file
-        cv2.imwrite(img_name, img_product )
+            #save combined image to file, as a separate file
+            img_product = cv2.imread(combined_url)
+            #get time 
+            timestr = time.strftime("%Y%m%d_%H%M%S")
+            #set file name for combination file
+            img_name = ("Combination_{}.png".format(timestr))
+            #create image file
+            cv2.imwrite(img_name, img_product )
 
-        #create dict
-        combinations_dict = {
-            "id" : new_id,
-            "product_name" : product.product_name,
-            "img_url" : img_name,
-            "link" : product.link
-            }
-        #add new combination to existing combination list
-        combinations.append(combinations_dict)    
-        #call save function
-        self.Save_Combinations(combinations)
-        #go to new combination page
-        self.sm.get_screen("Combination_page").Update_Page(product,self.sm,combinations_dict["id"])
-        self.sm.current = 'Combination_page'
+            #create dict
+            combinations_dict = {
+                "id" : new_id,
+                "product_name" : product.product_name,
+                "img_url" : img_name,
+                "link" : product.link
+                }
+            #add new combination to existing combination list
+            combinations.append(combinations_dict)    
+            #call save function
+            self.Save_Combinations(combinations)
+            #change product img to combination img 
+            product.img_url = combinations_dict["img_url"]
+            #go to new combination page
+            self.sm.get_screen("Combination_page").Update_Page(product,self.sm,combinations_dict["id"])
+            self.sm.current = 'Combination_page'
 
 
 

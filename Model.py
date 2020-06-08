@@ -53,6 +53,7 @@ class Main_Model_Page(Screen):
         show.sm = self.sm
         #assign preview image to popup image
         show.ids.model_image.source = sourcee
+        show.ids.model_image.reload()
         #create popup window
         popupWindow = Popup(title="Model Preview?", content=show, size_hint=(0.2,0.2))
         #assign popupWindow as reference, in order to close it via the button
@@ -67,10 +68,11 @@ class Main_Model_Page(Screen):
         if os.path.exists("Model.png"):
             #show model image in preview
             self.ids.model_image.source = "Model.png"
+            self.ids.model_image.reload()
         else:
             #show default image
             self.ids.model_image.source = "default.jpg"
-
+            self.ids.model_image.reload()
     #show the delete model popup
     def Show_delete_popup(self):    
         #if there is a model to delete         
@@ -94,7 +96,7 @@ class Main_Model_Page(Screen):
             os.remove("Model.png")
         #remove model from app image preview
         self.ids.model_image.source = "default.jpg"
-        
+        self.ids.model_image.reload()
     #updates the preview(image), of the model
     def Update_model_image(self,url):
         #updates the model image
@@ -110,6 +112,7 @@ class Filechooser_Page(Screen):
         print(filename)
         try:
             self.ids.image_show.source = filename[0]
+            self.ids.model_image.reload()
         except: 
             pass
     #open a selected path/folder
@@ -142,6 +145,7 @@ class Create_model_page(Screen):
         show.sm = self.sm
         #assign preview image to popup image
         show.ids.model_image.source = sourcee
+        show.ids.model_image.reload()
         #create popup window
         popupWindow = Popup(title="Model Preview:", content=show, size_hint=(0.2,0.2))
         #assign popupWindow as reference, in order to close it via the button
