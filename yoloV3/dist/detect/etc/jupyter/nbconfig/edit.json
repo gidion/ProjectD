@@ -1,0 +1,11 @@
+{
+  "Editor": {
+    "codemirror_options": {
+      "vimMode": false,
+      "keyMap": "default"
+    },
+    "file_extension_modes": {
+      ".py": "Python"
+    }
+  }
+}

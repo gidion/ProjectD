@@ -30,6 +30,8 @@ import cv2
 import os
 import json
 
+from yoloV3.combineImages import combineImages
+
 class Combination_item():
     id = -1
     product_name = ''
@@ -72,28 +74,11 @@ class Combine_page(Screen):
     def Temp_Combine(self):
         #reloads/refreshes the image 
         #opencv reads image from preview, by reading the image url, from the preview image
-        img_product = cv2.imread(self.ids.image_product.source)
-        img_person = cv2.imread(self.ids.model.source)
-        #new img url
-        img_combined = "temp_combination.png"
-        #Image Processing steps, placeholder
-        hsv_product = cv2.cvtColor(img_product, cv2.COLOR_BGR2HSV)
-        #rgb colors
-        l_b = np.array([0, 32, 0])
-        #hue
-        u_b = np.array([255, 255, 255])
-        mask = cv2.inRange(hsv_product, l_b, u_b)
- 
-        #create image from processed image
-        img_product = cv2.bitwise_and(img_product, img_product, mask=mask)
+        img_product = self.ids.image_product.source
+        img_person = self.ids.model.source
 
-        #cropt images
-        img_product = cv2.resize(img_product, (512,512) )
-        img_person = cv2.resize(img_person,(512,512))
-        #add with weighted          img alpha  img2 alpha  gamma
-        result_img = cv2.addWeighted(img_product, 1, img_person, 1, 0)
-        #save new processed image copy
-        cv2.imwrite(img_combined, result_img )
+        img_combined = combineImages.getCombination(img_person, img_product)
+
         #show processed image
         self.ids.combined.source = img_combined
         #reloads/refreshes the image
