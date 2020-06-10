@@ -7,31 +7,31 @@
     sm : None
     on_enter:
         app.crop_image_for_tile(tile_1a, tile_1a.size, \
-        "dress1.jpg")
+        "dress1.png")
         
         app.crop_image_for_tile(tile_2a, tile_2a.size, \
-        "dress2.jpg")
+        "dress2.png")
         
         app.crop_image_for_tile(tile_3a, tile_3a.size, \
-        "dress3.jpg")
+        "dress3.png")
         
         app.crop_image_for_tile(tile_4a, tile_4a.size, \
-        "dress4.jpg")
+        "dress4.png")
         
         app.crop_image_for_tile(tile_5a, tile_5a.size, \
-        "dress2.jpg")
+        "dress2.png")
         
         app.crop_image_for_tile(tile_6a, tile_6a.size, \
-        "dress1.jpg")
+        "dress1.png")
         
         app.crop_image_for_tile(tile_7a, tile_7a.size, \
-        "dress4.jpg")
+        "dress4.png")
         
         app.crop_image_for_tile(tile_8a, tile_8a.size, \
-        "dress3.jpg")
+        "dress3.png")
         
         app.crop_image_for_tile(tile_9a, tile_9a.size, \
-        "dress2.jpg")
+        "dress2.png")
 
     BoxLayout:
         orientation: "vertical"
@@ -52,7 +52,7 @@
                 height: self.minimum_height
                 padding: dp(4), dp(4)
                 spacing: dp(4)
-                 
+
                 SmartTileWithLabel:
                     id: tile_1a
                     text:
@@ -60,7 +60,7 @@
                     on_release:
                         root.sm.current = 'Result'
                     tile_text_color: (1,1,1,0.6)
-                
+
                 SmartTileWithLabel:
                     id: tile_2a
                     text:
@@ -68,7 +68,7 @@
                     on_release:
                         root.sm.current = 'Result'
                     tile_text_color: (1,1,1,0.6)
-                
+
                 SmartTileWithLabel:
                     id: tile_3a
                     name: 'sdtsdaf'
@@ -77,7 +77,7 @@
                     tile_text_color: (1,1,1,0.6)
                     on_release:
                         root.sm.current = 'Result'
-                
+
                 SmartTileWithLabel:
                     id: tile_4a
                     text:
@@ -85,7 +85,7 @@
                     tile_text_color: (1,1,1,0.6)
                     on_release:
                         root.sm.current = 'Result'
-                
+
                 SmartTileWithLabel:
                     id: tile_5a
                     text:
@@ -93,7 +93,7 @@
                     on_release:
                         root.sm.current = 'Result'
                     tile_text_color: (1,1,1,0.6)
-                
+
                 SmartTileWithLabel:
                     id: tile_6a
                     text:
@@ -101,7 +101,7 @@
                     on_release:
                         root.sm.current = 'Result'
                     tile_text_color: (1,1,1,0.6)
-               
+
                 SmartTileWithLabel:
                     id: tile_7a
                     text:
@@ -109,7 +109,7 @@
                     on_release:
                         root.sm.current = 'Result'
                     tile_text_color: (1,1,1,0.6)
-                
+
                 SmartTileWithLabel:
                     id: tile_8a
                     text:
@@ -117,7 +117,7 @@
                     on_release:
                         root.sm.current = 'Result'
                     tile_text_color: (1,1,1,0.6)
-                
+
                 SmartTileWithLabel:
                     id: tile_9a
                     text:
