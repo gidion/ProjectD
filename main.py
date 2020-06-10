@@ -32,11 +32,15 @@ import Gallery as Gallery_
 import Camera as Camera_
 import Model as Model_
 import Assortment as Assortment_
+import Combine as Combine_
+import Combination as Combination_
+
+
 import Detail as Detail_
 import admin as Admin
 import numpy as np
 
-import cv2 
+import cv2
 import os
 
 
@@ -50,49 +54,9 @@ Builder.load_file('Camera.kv')
 Builder.load_file('Model.kv') 
 Builder.load_file('Assortment.kv') 
 Builder.load_file('Detail.kv')
-Builder.load_file('admin.kv')
-
-
-
-'''Update picture'''
-
-
-def read_file(filename):
-    with open(filename, 'rb') as f:
-        photo = f.read()
-    return photo
-
-
-def update_blob(clothing_id, filename):
-    # read file
-    data = read_file(filename)
-
-    # prepare update query and data
-    query = "UPDATE clothing " \
-            "SET image = %s " \
-            "WHERE id  = %s"
-
-    args = (data, clothing_id)
-
-
-    try:
-        connection = mysql.connector.connect(host='localhost',
-                                             database='tashira',
-                                             user='root',
-                                             password='')
-        cursor = connection.cursor()
-        cursor.execute(query, args)
-        connection.commit()
-    except Error as e:
-        print(e)
-    finally:
-        cursor.close()
-        connection.close()
-        print("MySQL connection is closed")
-
-
-# update_blob(1, r"C:\Users\Kunyo\Desktop\dress_pic1.jpg")
-
+Builder.load_file('Combine.kv')
+Builder.load_file('Combination.kv')
+Builder.load_file('Admin.kv')
 
 
 class ImageButton(ButtonBehavior, Image):
@@ -207,7 +171,10 @@ class DrawerList(ThemableBehavior, MDList):
 
 
 class NavDrawerAndScreenManagerApp(MDApp):
-
+    #to make sure the assortment page only retrieves the products once
+    done_assortment = False
+    #to make sure the gallery page only retrieves the combinations once
+    done_gallery = False
     def crop_image_for_tile(self, instance, size, path_to_crop_image):
         if not os.path.exists(os.path.join(self.directory, path_to_crop_image)):
             size = (int(size[0]), int(size[1]))
@@ -235,32 +202,18 @@ class NavDrawerAndScreenManagerApp(MDApp):
             self.root.ids.sm.get_screen("Main_Model_Page").Check_existing_model()
 
     def on_start(self):
-        self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Home", text="Home",
-                       icon="home-circle-outline",
-                       on_release=self.openScreen)
-        )
-        self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Gallery", text="Gallery",
-                       icon="image-multiple",
-                       on_release=self.openScreen)
-        )
-        self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Main_Model_Page", text="Model",
-                       icon="camera",
-                       on_release=self.openScreen)
-        )
-        self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Assortment", text="Assortment",
-                       icon="tshirt-v",
-                       on_release=self.openScreen)
-        )
-        self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Admin", text="Admin",
-                       icon="key",
-                       on_release=self.openScreen)
-        )
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Home", "Home", "home-circle-outline", self)
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Gallery", "Gallery", "image-multiple", self)
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Main_Model_Page", "Model", "camera", self)
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Assortment", "Assortment", "tshirt-v", self)
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Admin", "Admin", "key", self)
 
+def add_menu_item(_parent_widget, _target, _Text, _icon, _self):
+    _parent_widget.add_widget(
+        ItemDrawer(target=_target, text=_Text,
+                icon=_icon,
+                on_release=_self.openScreen)
+    )
 
 if __name__ == "__main__":
     NavDrawerAndScreenManagerApp().run()

@@ -7,53 +7,59 @@ WindowManager:
     Filechooser_Page:
 
 <Main_Model_Page>:
-    name: "Main_Model_Page"
+    name: "Your model"
     sm : None 
     #temp image
     ImageButton:
         id: model_image
         source: "default.jpg"
-
-        pos_hint: {"x": 0.2, "top": 0.87 }
+        
+        pos_hint: {"center_x": 0.5, "top": 1 }
         #           x   y
-        size_hint: 0.6, 0.45
+        size_hint: 0.80, 0.80
         on_release: root.Show_image_popup(self.source)
 
     #create/cam
     Button:
         id: 'Create'
         text: "Create Model"
-        pos_hint: {"x":0.05, "y": 0.23}
-        size_hint: 0.25, 0.15
-        background_color: 0.9, 0.8, 0.6, 1
+        pos_hint: {"x":0.05, "y": 0.22}
+        size_hint: 0.25, 0.08
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
         on_release: 
             root.sm.current =  "Create_model_page"
             #sm.transition.direction = "down"
 
-    #Edit
+    #Requirements
     Button:
-        id: Edit
-        text: "Edit"
+        id: Requirements
+        text: "Instructions"
         #on_release: root.btn()
-        pos_hint: {"x":0.375, "y": 0.1}
-        size_hint: 0.25, 0.15
-        background_color: 0.9, 0.7, 0, 1
-        #on_release: root.Check_existing_model()
+        pos_hint: {"x":0.375, "y": 0.22}
+        size_hint: 0.25, 0.08
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
+        on_release: root.Show_requirements_popup()
+
     #Delete
     Button:
         id: Delete
         text: "Delete"
         on_release: root.Show_delete_popup()
-        pos_hint: {"x":0.7, "y": 0.23}
-        size_hint: 0.25, 0.15
-        background_color: 1, 0, 0, 1
+        pos_hint: {"x":0.7, "y": 0.22}
+        size_hint: 0.25, 0.08
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
     
 <Delete_popup>:
     windw: None 
     Label:
-        text: "Are you sure you want to delete your model?"
+        text: "Are you sure you want to \n delete your model?"
         size_hint: 0.6, 0.2
         pos_hint: {"x":0.2,"top": 1}
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
     Button:
         id: Del_button
         text: "Delete model"
@@ -61,6 +67,23 @@ WindowManager:
         pos_hint: {"x": 0.2,"top": 0.3}
         on_release:
             root.sm.get_screen('Main_Model_Page').Delete_model()
+            root.windw.dismiss()
+
+<Requirements_popup>:
+    windw: None 
+    Label:
+        id: req_text
+        text: ""
+        size_hint: 0.6, 0.35
+        pos_hint: {"x":0.22,"top": 0.9}
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
+    Button:
+        id: Req_button
+        text: "Ok"
+        size_hint: 0.3, 0.2
+        pos_hint: {"center_x": 0.5,"top": 0.3}
+        on_release:
             root.windw.dismiss()
 
 <Image_popup>:
@@ -73,10 +96,11 @@ WindowManager:
         pos_hint: {"x": -3, "y": -3 }
         #           x   y
         size_hint: 7, 7
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
 
 ########
 <Create_model_page>:
-    name: "Create_model_page"
+    name: "Create Model"
     sm: None 
        
     #temp image
@@ -95,7 +119,8 @@ WindowManager:
         #on_release: root.btn()
         pos_hint: {"x":0.1, "y": 0.2}
         size_hint: 0.25, 0.15
-        background_color: 0.9, 0.8, 0.6, 1
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
         on_release: 
             root.sm.current =  "Camera"
     #Done
@@ -108,7 +133,8 @@ WindowManager:
             root.create_model()
         pos_hint: {"x":0.375, "y": 0.16}
         size_hint: 0.25, 0.15
-        background_color: 0.9, 0.7, 0, 1
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
 
      #process
     Button:
@@ -120,7 +146,8 @@ WindowManager:
             root.process()
         pos_hint: {"x":0.375, "y": 0.31}
         size_hint: 0.25, 0.15
-        background_color: 0.9, 0.7, 0, 1
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
 
 
     #back
@@ -129,7 +156,8 @@ WindowManager:
         text: "Go back"
         pos_hint: {"x":0.375, "y": 0.01}
         size_hint: 0.25, 0.15
-        background_color: 0.05, 0.05, 0.05, 1
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
         on_release: 
             root.sm.current = "Main_Model_Page"
             #root.manager.transition.direction = "up"
@@ -142,11 +170,12 @@ WindowManager:
             #root.manager.transition.direction = "left"
         pos_hint: {"x":0.65, "y": 0.2}
         size_hint: 0.25, 0.15
-        background_color: 1, 0, 0, 1
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
 #######   
 #######
 <Filechooser_Page>: 
-    name: 'Filechooser_Page' 
+    name: 'File Chooser' 
     sm: None
     FloatLayout:
         id: Filechooser
@@ -177,11 +206,23 @@ WindowManager:
                 #root.select(*args) 
                 root.selected(self.selection) 
         Image:
-            pos_hint: {'X': 0.65, 'y': 0}
-            size_hint: 0.4, 0.4
+            pos_hint: {'center_x': 0.5, 'center_y': 0.23}
+            size_hint: 0.55, 0.55
             id: image_show
             source: "default.jpg"
-            
+
+        Button:
+            id: 'Cancel'
+            text: "Cancel"
+            on_release:
+                root.sm.current = "Create_model_page"
+                #root.manager.transition.direction = "right"
+            pos_hint: {"center_x":0.3, "center_y": 0.03}
+            size_hint: 0.25, 0.05
+            background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+            color: (235 / 255, 153 / 255, 153 / 255, 1)
+
+
         Button:
             id: 'Submit'
             text: "Submit"
@@ -189,9 +230,11 @@ WindowManager:
                 root.sm.current = "Create_model_page"
                 #root.manager.transition.direction = "right"
                 root.submit()
-            pos_hint: {"x":0.55, "y": 0.1}
-            size_hint: 0.25, 0.15
-            background_color: 0.9, 0.7, 0, 1
+            pos_hint: {"center_x":0.7, "center_y": 0.03}
+            size_hint: 0.25, 0.05
+            background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+            color: (235 / 255, 153 / 255, 153 / 255, 1)
+
 
 
             

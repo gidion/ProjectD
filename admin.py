@@ -15,6 +15,8 @@ from kivy.uix.screenmanager import Screen
 from mysql.connector import Error
 
 imagefile_extensions = {".jpg", "jpeg", ".png", "bmp", "gif"}
+image_names = []
+
 
 # Write database files to local disk
 def write_file(data, filename):
@@ -26,7 +28,6 @@ def write_file(data, filename):
 def read_blob(filename):
     # select table
     query = "SELECT * FROM clothing"
-
 
     try:
         # query blob data form the clothing table
@@ -42,8 +43,10 @@ def read_blob(filename):
             # write blob data into a file with 'item_' prefix and '.jpg' file extension
             if row[1][-4:] in imagefile_extensions:
                 write_file(row[2], (filename + 'item_' + row[1]))
+                image_names.append((+ row[1]))
             else:
                 write_file(row[2], (filename + 'item_' + row[1] + '.jpg'))
+                image_names.append((row[1] + '.jpg'))
 
     except Error as error:
         print(error)
@@ -195,8 +198,7 @@ class Admin(Screen):
         # create content and add to the popup
         edit_box = GridLayout(rows=3)
 
-        # delete later - Change directory back to default
-        edit_filechooser = FileChooserListView(path=r'C:\Not Porn')
+        edit_filechooser = FileChooserListView(path=r'C:')
         edit_filechooser.bind(on_selection=lambda x: self.selected(edit_filechooser.selection))
         edit_box.add_widget(edit_filechooser)
 
@@ -280,8 +282,10 @@ class Admin(Screen):
             elif isolate_filename(str(self.add_filechooser.selection[0][-4:])) in imagefile_extensions:
 
                 query_name = isolate_filename(str(self.add_filechooser.selection[0][:-4]))
-                query = 'SELECT * FROM clothing WHERE name = "' + query_name + '"'
+                if 'item_' in query_name:
+                    query_name = query_name[5:]
 
+                query = 'SELECT * FROM clothing WHERE name = "' + query_name + '"'
                 try:
                     connection = mysql.connector.connect(host='localhost',
                                                          database='tashira',
@@ -343,8 +347,7 @@ class Admin(Screen):
         # create content and add to the popup
         popup_box = GridLayout(rows=3)
 
-        # delete later - Change directory back to default
-        self.add_filechooser = FileChooserListView(path=r'C:\Not Porn')
+        self.add_filechooser = FileChooserListView(path=r'C:')
         self.add_filechooser.bind(on_selection=lambda x: self.selected(self.add_filechooser.selection))
         popup_box.add_widget(self.add_filechooser)
 

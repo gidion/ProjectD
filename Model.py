@@ -1,22 +1,12 @@
-from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.textinput import TextInput
-from kivy.uix.button import Button
-from kivy.config import Config
-from kivy.uix.widget import Widget
-from kivy.properties import ObjectProperty
-from kivy.uix.floatlayout import FloatLayout
-from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.popup import Popup
-from kivy.uix.image import Image
-import cv2 
 import os
-from kivy.uix.boxlayout import BoxLayout
+
+import cv2
 import numpy as np
-from kivy.clock import Clock
 from kivy.uix.button import ButtonBehavior
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.image import Image
+from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 #.kv must be the same, but without App
 
@@ -43,6 +33,12 @@ class Delete_popup(FloatLayout):
     sm = None    
     windw = None
 
+#popup window for deleting model
+class Requirements_popup(FloatLayout):
+    #screen manager reference
+    sm = None    
+    windw = None
+    
 class Main_Model_Page(Screen):
 
     #show the image preview model popup
@@ -53,6 +49,7 @@ class Main_Model_Page(Screen):
         show.sm = self.sm
         #assign preview image to popup image
         show.ids.model_image.source = sourcee
+        show.ids.model_image.reload()
         #create popup window
         popupWindow = Popup(title="Model Preview?", content=show, size_hint=(0.2,0.2))
         #assign popupWindow as reference, in order to close it via the button
@@ -60,6 +57,19 @@ class Main_Model_Page(Screen):
         #open window     
         popupWindow.open()
 
+    def Show_requirements_popup(self):    
+        #if there is a model to delete         
+        show = Requirements_popup()
+        #add screen manager reference, to popup
+        show.sm = self.sm
+        show.ids.req_text.text = "\n\nRequirements for your model: \n\n Show your body face forward. \n\n Stand with your full body in the picture. \n\nMake the light in the environment isn't too bright\n or too dark \n\n Make sure you stand out against the background \n with color. "
+        #assign preview image to popup image
+        #create popup window
+        popupWindow = Popup(title="Requirements", content=show, size_hint=(0.8,0.6))
+        #assign popupWindow as reference, in order to close it via the button
+        show.windw = popupWindow
+        #open window     
+        popupWindow.open()
 
     #checks for a saved model in the files
     def Check_existing_model(self):
@@ -67,10 +77,12 @@ class Main_Model_Page(Screen):
         if os.path.exists("Model.png"):
             #show model image in preview
             self.ids.model_image.source = "Model.png"
+            self.ids.model_image.reload()
         else:
             #show default image
             self.ids.model_image.source = "default.jpg"
-
+            self.ids.model_image.reload()
+    
     #show the delete model popup
     def Show_delete_popup(self):    
         #if there is a model to delete         
@@ -94,7 +106,8 @@ class Main_Model_Page(Screen):
             os.remove("Model.png")
         #remove model from app image preview
         self.ids.model_image.source = "default.jpg"
-        
+        self.ids.model_image.reload()
+
     #updates the preview(image), of the model
     def Update_model_image(self,url):
         #updates the model image
@@ -110,6 +123,7 @@ class Filechooser_Page(Screen):
         print(filename)
         try:
             self.ids.image_show.source = filename[0]
+            self.ids.model_image.reload()
         except: 
             pass
     #open a selected path/folder
@@ -133,6 +147,9 @@ class Image_popup(FloatLayout):
     windw = None
 
 class Create_model_page(Screen):
+    def on_pre_enter(self):
+        if not(self.sm.get_screen("Camera").check_camera()):
+            self.ids['Camera'].disabled = True
 
     #show the image preview model popup
     def Show_image_popup(self,sourcee):    
@@ -142,6 +159,7 @@ class Create_model_page(Screen):
         show.sm = self.sm
         #assign preview image to popup image
         show.ids.model_image.source = sourcee
+        show.ids.model_image.reload()
         #create popup window
         popupWindow = Popup(title="Model Preview:", content=show, size_hint=(0.2,0.2))
         #assign popupWindow as reference, in order to close it via the button
@@ -150,39 +168,41 @@ class Create_model_page(Screen):
         popupWindow.open()
 
     #update the main model page/preview/image
-    def create_model(self):     
-        #get process img 
-        img = cv2.imread(self.ids.create_image.source)
-        #model file name
-        new_model = "Model.png"
-        #create new model png
-        cv2.imwrite(new_model, img )
-        #assign new model img to 
-        self.sm.get_screen('Main_Model_Page').Update_model_image(new_model)
+    def create_model(self):  
+        if self.ids.create_image.source != 'default.jpg':
+            #get process img 
+            img = cv2.imread(self.ids.create_image.source)
+            #model file name
+            new_model = "Model.png"
+            #create new model png
+            cv2.imwrite(new_model, img )
+            #assign new model img to 
+            self.sm.get_screen('Main_Model_Page').Update_model_image(new_model)
 
     def process(self):
-        #reloads/refreshes the image 
-        self.ids.create_image.reload()
-        #opencv reads image from preview, by reading the image url, from the preview image
-        img = cv2.imread(self.ids.create_image.source)
-        #new img url
-        img_pros_url = "processed.png"
-        #Image Processing steps, placeholder
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        #rgb colors
-        l_b = np.array([0, 32, 0])
-        #hue
-        u_b = np.array([255, 255, 255])
-        mask = cv2.inRange(hsv, l_b, u_b)
-        #create image from processed image
-        res = cv2.bitwise_and(img, img, mask=mask)
+        if self.ids.create_image.source != 'default.jpg':
+            #reloads/refreshes the image 
+            self.ids.create_image.reload()
+            #opencv reads image from preview, by reading the image url, from the preview image
+            img = cv2.imread(self.ids.create_image.source)
+            #new img url
+            img_pros_url = "processed.png"
+            #Image Processing steps, placeholder
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            #rgb colors
+            l_b = np.array([0, 32, 0])
+            #hue
+            u_b = np.array([255, 255, 255])
+            mask = cv2.inRange(hsv, l_b, u_b)
+            #create image from processed image
+            res = cv2.bitwise_and(img, img, mask=mask)
 
-        #save new processed image copy
-        cv2.imwrite(img_pros_url, res )
-        #show processed image
-        self.ids.create_image.source = img_pros_url
-        #reloads/refreshes the image
-        self.ids.create_image.reload()
+            #save new processed image copy
+            cv2.imwrite(img_pros_url, res )
+            #show processed image
+            self.ids.create_image.source = img_pros_url
+            #reloads/refreshes the image
+            self.ids.create_image.reload()
         
 
 
