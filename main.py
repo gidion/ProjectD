@@ -19,6 +19,9 @@ from kivymd.theming import ThemableBehavior
 from kivymd.uix.list import OneLineIconListItem, MDList
 from kivymd.utils.cropimage import crop_image
 
+import mysql.connector
+from mysql.connector import Error
+
 from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.lang import Builder
@@ -30,6 +33,7 @@ import Camera as Camera_
 import Model as Model_
 import Assortment as Assortment_
 import Detail as Detail_
+import admin as Admin
 import numpy as np
 
 import cv2 
@@ -45,7 +49,51 @@ Builder.load_file('Gallery.kv')
 Builder.load_file('Camera.kv') 
 Builder.load_file('Model.kv') 
 Builder.load_file('Assortment.kv') 
-Builder.load_file('Detail.kv') 
+Builder.load_file('Detail.kv')
+Builder.load_file('admin.kv')
+
+
+
+'''Update picture'''
+
+
+def read_file(filename):
+    with open(filename, 'rb') as f:
+        photo = f.read()
+    return photo
+
+
+def update_blob(clothing_id, filename):
+    # read file
+    data = read_file(filename)
+
+    # prepare update query and data
+    query = "UPDATE clothing " \
+            "SET image = %s " \
+            "WHERE id  = %s"
+
+    args = (data, clothing_id)
+
+
+    try:
+        connection = mysql.connector.connect(host='localhost',
+                                             database='tashira',
+                                             user='root',
+                                             password='')
+        cursor = connection.cursor()
+        cursor.execute(query, args)
+        connection.commit()
+    except Error as e:
+        print(e)
+    finally:
+        cursor.close()
+        connection.close()
+        print("MySQL connection is closed")
+
+
+# update_blob(1, r"C:\Users\Kunyo\Desktop\dress_pic1.jpg")
+
+
 
 class ImageButton(ButtonBehavior, Image):
     pass
@@ -208,8 +256,8 @@ class NavDrawerAndScreenManagerApp(MDApp):
                        on_release=self.openScreen)
         )
         self.root.ids.content_drawer.ids.md_list.add_widget(
-            ItemDrawer(target="Settings", text="Settings",
-                       icon="settings-outline",
+            ItemDrawer(target="Admin", text="Admin",
+                       icon="key",
                        on_release=self.openScreen)
         )
 
