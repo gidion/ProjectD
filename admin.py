@@ -28,7 +28,7 @@ def write_file(data, filename):
 def read_blob(filename):
     # select table
     query = "SELECT * FROM clothing"
-
+    cursor = None
     try:
         # query blob data form the clothing table
         connection = mysql.connector.connect(host='localhost',
@@ -52,8 +52,9 @@ def read_blob(filename):
         print(error)
 
     finally:
-        cursor.close()
-        connection.close()
+        if not(cursor == None):
+            cursor.close()
+            connection.close()
 
 
 # Create 'Clothing' Directory if it doesn't exist
