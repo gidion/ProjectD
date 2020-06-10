@@ -5,7 +5,7 @@
 <Combination_page>:
     size_hint_x: 0.9
     pos_hint: {'center_x': 0.5}
-    name: "Combination_page"
+    name: "Combination"
     sm: None
     product: None
     comb_id: -1
@@ -32,24 +32,31 @@
         size_hint: (0.25,0.1)
         pos_hint: {'center_x': 0.25, 'center_y': 0.07}
         text: "Check in store"
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
         on_release:
             root.To_store(root.product.link)
     Button:
         size_hint: (0.25,0.1)
         pos_hint: {'center_x': 0.5, 'center_y': 0.07}
         text: "Go Back"
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
         on_release:
             root.sm.current = 'Gallery'  
     Button:
         size_hint: (0.25,0.1)
         pos_hint: {'center_x': 0.75, 'center_y': 0.07}
         text: "Delete"
+        background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+        color: (235 / 255, 153 / 255, 153 / 255, 1)
         on_release:
             root.Show_delete_popup_combination()
             #root.sm.current = 'Gallery'
 
 <Delete_popup_combination>:
     windw: None 
+    background_color: (250 / 255, 239 / 255, 239 / 255, 1)
     Label:
         text: "Are you sure you want to \n delete your combination?"
         size_hint: 0.6, 0.2

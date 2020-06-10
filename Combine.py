@@ -36,7 +36,7 @@ class Combination_item():
     #file path to image
     img_url =  ''
     #web link to product on webshop
-    link = 'www.google.com'
+    link = 'https://www.tashira.nl/'
     def __init__(self, id, product_name,img_url,link):
         self.id = id
         self.product_name = product_name

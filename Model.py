@@ -43,6 +43,12 @@ class Delete_popup(FloatLayout):
     sm = None    
     windw = None
 
+#popup window for deleting model
+class Requirements_popup(FloatLayout):
+    #screen manager reference
+    sm = None    
+    windw = None
+    
 class Main_Model_Page(Screen):
 
     #show the image preview model popup
@@ -61,6 +67,19 @@ class Main_Model_Page(Screen):
         #open window     
         popupWindow.open()
 
+    def Show_requirements_popup(self):    
+        #if there is a model to delete         
+        show = Requirements_popup()
+        #add screen manager reference, to popup
+        show.sm = self.sm
+        show.ids.req_text.text = "\n\nRequirements for your model: \n\n Show your body face forward. \n\n Stand with your full body in the picture. \n\nMake the light in the environment isn't too bright\n or too dark \n\n Make sure you stand out against the background \n with color. "
+        #assign preview image to popup image
+        #create popup window
+        popupWindow = Popup(title="Requirements", content=show, size_hint=(0.8,0.8))
+        #assign popupWindow as reference, in order to close it via the button
+        show.windw = popupWindow
+        #open window     
+        popupWindow.open()
 
     #checks for a saved model in the files
     def Check_existing_model(self):
@@ -73,6 +92,7 @@ class Main_Model_Page(Screen):
             #show default image
             self.ids.model_image.source = "default.jpg"
             self.ids.model_image.reload()
+    
     #show the delete model popup
     def Show_delete_popup(self):    
         #if there is a model to delete         
@@ -97,6 +117,7 @@ class Main_Model_Page(Screen):
         #remove model from app image preview
         self.ids.model_image.source = "default.jpg"
         self.ids.model_image.reload()
+
     #updates the preview(image), of the model
     def Update_model_image(self,url):
         #updates the model image

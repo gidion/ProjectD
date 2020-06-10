@@ -7,25 +7,47 @@
     name: "Camera"
     sm : None
     RelativeLayout:
+        
 
         ShadowWidget:
-            size_hint:(0.5,0.1)
+            size_hint:(0.7,0.1)
             pos_hint: {'center_x':0.5, 'center_y':0.1}
             elevation: 3
         Camera:
             id: camera
             
-        #pause button
+        #timer button
         MDIconButton:
-            pos_hint: {'center_x':0.4, 'center_y': 0.1}
-            icon: "pause-circle-outline" if camera.play else "play-circle-outline"
+            pos_hint: {'center_x':0.3, 'center_y': 0.1}
+            icon: "timer"
             user_font_size: "64sp"
             theme_text_color: "Custom"
-            on_release: camera.play = not camera.play
+            on_release: root.Countdown_camera()
+            background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+            color: (235 / 255, 153 / 255, 153 / 255, 1)
         #capture button
         MDIconButton:
-            pos_hint: {'center_x':0.6, 'center_y': 0.1}
+            pos_hint: {'center_x':0.5, 'center_y': 0.1}
             icon: "camera-plus"
             user_font_size: "64sp"
             theme_text_color: "Custom"
             on_release: root.capture()
+            background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+            color: (235 / 255, 153 / 255, 153 / 255, 1)
+        #go back
+        MDIconButton:
+            pos_hint: {'center_x':0.7, 'center_y': 0.1}
+            icon: "close-circle"
+            user_font_size: "64sp"
+            theme_text_color: "Custom"
+            on_release: root.sm.current = 'Create_model_page'
+            background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+            color: (235 / 255, 153 / 255, 153 / 255, 1)
+        MDLabel:
+            id: timer_text
+            pos_hint: {'center_x':0.7, 'center_y':0.2}
+            size_hint: 1, 1
+            text: "5 Second timer:"
+            text_size: 2, 2
+            color: (0,0,0,1)
+           

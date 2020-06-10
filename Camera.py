@@ -58,6 +58,12 @@ class Camera_page(Screen):
         #redirect back to create model page
         self.sm.current = 'Create_model_page'
         #print("Captured2")
+    def Countdown_camera(self):
+        time.sleep(5)
+
+        self.capture()
+
+
 
 class CameraClick(BoxLayout):
     pass
