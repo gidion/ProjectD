@@ -1,0 +1,36 @@
+#:kivy 1.0.9
+#:import SwapTransition kivy.uix.screenmanager.SwapTransition
+<ImageButton>:
+    on_release:
+        print(self.source)
+        print(self.id)
+
+<Admin>:
+    name: "Admin"
+    container: container
+    add_item_button: add_item_button
+
+    Button:
+        id: add_item_button
+        text: '+'
+        size_hint: (None, None)
+        size: (60, 40)
+        pos_hint: {'top':0.985, 'right':0.95}
+    GridLayout:
+        pos_hint: {'top': 0.919}
+        rows: 2
+        cols: 1
+        spacing: 0
+        padding: 0
+        font_name: "Calibri"
+
+        ScrollView:
+            GridLayout:
+                cols: 3
+                id: container
+                size_hint_y: None
+                spacing: 25
+                padding: 25
+
+        BoxLayout:
+            size_hint: (1,0.1)
