@@ -37,7 +37,6 @@ class Product_item():
 class MySmartTileWithLabel(SmartTileWithLabel):
     pass
 
-
 class Assortment_page(Screen):
     sm: None
 
