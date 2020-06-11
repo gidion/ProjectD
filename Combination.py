@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import time
 
@@ -30,6 +31,19 @@ import cv2
 import os
 import json
 import Gallery as Gallery_
+=======
+from kivy.uix.screenmanager import Screen
+
+import json
+import os
+import webbrowser
+
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import Screen
+
+
+>>>>>>> admin+master_merge
 class Combination_item():
     id = -1
     product_name = ''

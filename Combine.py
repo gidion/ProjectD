@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import time
 
@@ -29,6 +30,17 @@ import numpy as np
 import cv2 
 import os
 import json
+=======
+import json
+import os
+import time
+import webbrowser
+
+import cv2
+import numpy as np
+from kivy.uix.screenmanager import Screen
+
+>>>>>>> admin+master_merge
 
 class Combination_item():
     id = -1

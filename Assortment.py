@@ -1,68 +1,83 @@
-import os
-import time
-
-import kivy.properties as props
-from PIL import Image as ImagePIL, ImageDraw, ImageFilter
+import mysql.connector
 from kivy.app import App
-from kivy.clock import Clock
-from kivy.core.window import Window
-from kivy.graphics.texture import Texture
 from kivy.lang import Builder
-from kivy.properties import StringProperty
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import ButtonBehavior
+from kivy.properties import ObjectProperty
+from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
-from kivy.uix.label import Label
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivymd.app import MDApp
-from kivymd.theming import ThemableBehavior
-from kivymd.uix.list import OneLineIconListItem, MDList
-from kivymd.utils.cropimage import crop_image
-
-from kivy.uix.popup import Popup
-from kivy.uix.floatlayout import FloatLayout
-from kivy.lang import Builder
-from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import Screen
 from kivymd.uix.imagelist import SmartTileWithLabel
-import numpy as np
-import cv2 
-import os
+from mysql.connector import Error
+
+from admin import image_names
+
+assortment_list = []
+
+
 Builder.load_file('Assortment.kv')
+
 
 class Product_item():
     id = -1
     product_name = ''
-    #file path to image
-    img_url =  ''
-    #web link to product on webshop
+    # file path to image
+    img_url = ''
+    # web link to product on webshop
     link = 'www.google.com'
-    #desciption or summary of the product
+    # description or summary of the product
     text = ''
-    def __init__(self, id, product_name,img_url,link,text):
+
+    def __init__(self, id, product_name, img_url, link, text):
         self.id = id
         self.product_name = product_name
         self.img_url = img_url
         self.link = link
         self.text = text
 
+
 class MySmartTileWithLabel(SmartTileWithLabel):
     pass
-#temp products list, to be replaced with a list made from the database
-<<<<<<< Updated upstream
-temp_list = [Product_item('0','dress1','dress1.jpg',"http://google.com/",'Image 1'),Product_item('1','dress2','dress2.jpg',"http://google.com/",'Image 2'),Product_item('2','dress3','dress3.jpg','www.google.com','Image 3'),Product_item('3','dress4','dress4.jpg','www.google.com','Image 4')]
-=======
-temp_list = [Product_item('0','dress1','dress1.jpg',"https://www.tashira.nl/",'Image 1'),Product_item('1','dress2','dress2.jpg',"https://www.tashira.nl/",'Image 2'),Product_item('2','dress3','dress3.jpg','https://www.tashira.nl/','Image 3'),Product_item('3','dress4','dress4.jpg','https://www.tashira.nl/','Image 4')]
->>>>>>> Stashed changes
+
 
 class Assortment_page(Screen):
     sm: None
+
     def on_enter(self):
         if(not(App.get_running_app().done_assortment)):
-            for item in temp_list:
+
+            ############# DB
+
+            query = "SELECT * FROM clothing"
+
+            try:
+                # query blob data form the clothing table
+                connection = mysql.connector.connect(host='localhost',
+                                                     database='tashira',
+                                                     user='root',
+                                                     password='')
+                cursor = connection.cursor()
+                cursor.execute(query)
+                records = cursor.fetchall()
+
+                row_counter = 0
+
+                for row in records:
+                    assortment_list.append(Product_item(str(row_counter), row[1], 'Clothing\\item_'+image_names[row_counter], "https://www.tashira.nl/", 'Image'+str(row_counter)))
+                    row_counter += 1
+
+            except Error as error:
+                print(error)
+
+            finally:
+                cursor.close()
+                connection.close()
+
+            ########### DB
+
+            for item in assortment_list:
                 #combine the products text into the widgets text
-                main_text =  '[size=20][color=#ffffff]' + str(item.product_name) + '[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]'
+                main_text = '[size=20][color=#ffffff]' + str(item.product_name) + '[/color][/size]\n[size=10]2020_09_07_1842.jpg[/size]'
                 #create widget MySmartTileWithLabel
-                temp = MySmartTileWithLabel(id = item.id, text = main_text)
+                temp = MySmartTileWithLabel(id=item.id, text=main_text)
                 #assign screen manager to MySmartTileWithLabel widget, without using the init
                 temp.sm = self.sm
                 #assign the product info to the MySmartTileWithLabel
@@ -70,7 +85,12 @@ class Assortment_page(Screen):
                 #add the widget to the gridlayout
                 self.ids.Items_Grid.add_widget(temp)
                 #crop the image for the gallery
-                App.get_running_app().crop_image_for_tile(temp, temp.size, \
-                item.img_url)
+                App.get_running_app().crop_image_for_tile(temp, temp.size, item.img_url)
         App.get_running_app().done_assortment = True
+    pass
+
+class Assortment_page(Screen):
+    container = ObjectProperty(None)
+
+class ImageButton(ButtonBehavior, Image):
     pass

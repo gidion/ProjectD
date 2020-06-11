@@ -1,22 +1,12 @@
-from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.textinput import TextInput
-from kivy.uix.button import Button
-from kivy.config import Config
-from kivy.uix.widget import Widget
-from kivy.properties import ObjectProperty
-from kivy.uix.floatlayout import FloatLayout
-from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.popup import Popup
-from kivy.uix.image import Image
-import cv2 
 import os
-from kivy.uix.boxlayout import BoxLayout
+
+import cv2
 import numpy as np
-from kivy.clock import Clock
 from kivy.uix.button import ButtonBehavior
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.image import Image
+from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 #.kv must be the same, but without App
 
@@ -75,7 +65,7 @@ class Main_Model_Page(Screen):
         show.ids.req_text.text = "\n\nRequirements for your model: \n\n Show your body face forward. \n\n Stand with your full body in the picture. \n\nMake the light in the environment isn't too bright\n or too dark \n\n Make sure you stand out against the background \n with color. "
         #assign preview image to popup image
         #create popup window
-        popupWindow = Popup(title="Requirements", content=show, size_hint=(0.8,0.8))
+        popupWindow = Popup(title="Requirements", content=show, size_hint=(0.8,0.6))
         #assign popupWindow as reference, in order to close it via the button
         show.windw = popupWindow
         #open window     

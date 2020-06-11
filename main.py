@@ -19,6 +19,9 @@ from kivymd.theming import ThemableBehavior
 from kivymd.uix.list import OneLineIconListItem, MDList
 from kivymd.utils.cropimage import crop_image
 
+import mysql.connector
+from mysql.connector import Error
+
 from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.lang import Builder
@@ -34,9 +37,10 @@ import Combination as Combination_
 
 
 import Detail as Detail_
+import admin as Admin
 import numpy as np
 
-import cv2 
+import cv2
 import os
 
 
@@ -49,9 +53,11 @@ Builder.load_file('Gallery.kv')
 Builder.load_file('Camera.kv') 
 Builder.load_file('Model.kv') 
 Builder.load_file('Assortment.kv') 
-Builder.load_file('Detail.kv') 
-Builder.load_file('Combine.kv') 
-Builder.load_file('Combination.kv') 
+Builder.load_file('Detail.kv')
+Builder.load_file('Combine.kv')
+Builder.load_file('Combination.kv')
+Builder.load_file('Admin.kv')
+
 
 class ImageButton(ButtonBehavior, Image):
     pass
@@ -74,7 +80,7 @@ class ShadowWidget(Label):
         1: (1, 3, 0.12, 1, 2, 0.24),
         2: (3, 6, 0.16, 3, 6, 0.23),
         3: (10, 20, 0.19, 6, 6, 0.23),
-        4: (14, 28, 0.25, 10, 10, 0.22),   
+        4: (14, 28, 0.25, 10, 10, 0.22),
         5: (19, 38, 0.30, 15, 12, 0.22)
     }
 
@@ -200,7 +206,7 @@ class NavDrawerAndScreenManagerApp(MDApp):
         add_menu_item(self.root.ids.content_drawer.ids.md_list, "Gallery", "Gallery", "image-multiple", self)
         add_menu_item(self.root.ids.content_drawer.ids.md_list, "Main_Model_Page", "Model", "camera", self)
         add_menu_item(self.root.ids.content_drawer.ids.md_list, "Assortment", "Assortment", "tshirt-v", self)
-        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Settings", "Settings", "settings-outline", self)     
+        add_menu_item(self.root.ids.content_drawer.ids.md_list, "Admin", "Admin", "key", self)
 
 def add_menu_item(_parent_widget, _target, _Text, _icon, _self):
     _parent_widget.add_widget(

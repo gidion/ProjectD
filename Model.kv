@@ -14,17 +14,17 @@ WindowManager:
         id: model_image
         source: "default.jpg"
         
-        pos_hint: {"x": 0.2, "top": 0.87 }
+        pos_hint: {"center_x": 0.5, "top": 1 }
         #           x   y
-        size_hint: 0.6, 0.45
+        size_hint: 0.80, 0.80
         on_release: root.Show_image_popup(self.source)
 
     #create/cam
     Button:
         id: 'Create'
         text: "Create Model"
-        pos_hint: {"x":0.05, "y": 0.23}
-        size_hint: 0.25, 0.15
+        pos_hint: {"x":0.05, "y": 0.22}
+        size_hint: 0.25, 0.08
         background_color: (250 / 255, 239 / 255, 239 / 255, 1)
         color: (235 / 255, 153 / 255, 153 / 255, 1)
         on_release: 
@@ -34,10 +34,10 @@ WindowManager:
     #Requirements
     Button:
         id: Requirements
-        text: "Requirements"
+        text: "Instructions"
         #on_release: root.btn()
-        pos_hint: {"x":0.375, "y": 0.1}
-        size_hint: 0.25, 0.15
+        pos_hint: {"x":0.375, "y": 0.22}
+        size_hint: 0.25, 0.08
         background_color: (250 / 255, 239 / 255, 239 / 255, 1)
         color: (235 / 255, 153 / 255, 153 / 255, 1)
         on_release: root.Show_requirements_popup()
@@ -47,8 +47,8 @@ WindowManager:
         id: Delete
         text: "Delete"
         on_release: root.Show_delete_popup()
-        pos_hint: {"x":0.7, "y": 0.23}
-        size_hint: 0.25, 0.15
+        pos_hint: {"x":0.7, "y": 0.22}
+        size_hint: 0.25, 0.08
         background_color: (250 / 255, 239 / 255, 239 / 255, 1)
         color: (235 / 255, 153 / 255, 153 / 255, 1)
     
@@ -74,15 +74,15 @@ WindowManager:
     Label:
         id: req_text
         text: ""
-        size_hint: 0.6, 0.2
+        size_hint: 0.6, 0.35
         pos_hint: {"x":0.22,"top": 0.9}
         background_color: (250 / 255, 239 / 255, 239 / 255, 1)
         color: (235 / 255, 153 / 255, 153 / 255, 1)
     Button:
         id: Req_button
         text: "Ok"
-        size_hint: 0.6, 0.3
-        pos_hint: {"x": 0.2,"top": 0.3}
+        size_hint: 0.3, 0.2
+        pos_hint: {"center_x": 0.5,"top": 0.3}
         on_release:
             root.windw.dismiss()
 
@@ -206,11 +206,23 @@ WindowManager:
                 #root.select(*args) 
                 root.selected(self.selection) 
         Image:
-            pos_hint: {'X': 0.65, 'y': 0}
-            size_hint: 0.4, 0.4
+            pos_hint: {'center_x': 0.5, 'center_y': 0.23}
+            size_hint: 0.55, 0.55
             id: image_show
             source: "default.jpg"
-            
+
+        Button:
+            id: 'Cancel'
+            text: "Cancel"
+            on_release:
+                root.sm.current = "Create_model_page"
+                #root.manager.transition.direction = "right"
+            pos_hint: {"center_x":0.3, "center_y": 0.03}
+            size_hint: 0.25, 0.05
+            background_color: (250 / 255, 239 / 255, 239 / 255, 1)
+            color: (235 / 255, 153 / 255, 153 / 255, 1)
+
+
         Button:
             id: 'Submit'
             text: "Submit"
@@ -218,10 +230,11 @@ WindowManager:
                 root.sm.current = "Create_model_page"
                 #root.manager.transition.direction = "right"
                 root.submit()
-            pos_hint: {"x":0.55, "y": 0.1}
-            size_hint: 0.25, 0.15
+            pos_hint: {"center_x":0.7, "center_y": 0.03}
+            size_hint: 0.25, 0.05
             background_color: (250 / 255, 239 / 255, 239 / 255, 1)
             color: (235 / 255, 153 / 255, 153 / 255, 1)
+
 
 
             
